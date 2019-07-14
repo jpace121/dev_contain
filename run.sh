@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 podman run \
-    --mount type=bind,source=/home/jimmy/Develop/,destination=/home/jimmy \
+    --volume /home/jimmy/Develop:/root/Develop:rw \
     --rm \
-    --user jimmy \
-    -it jwp-build-latest \
+    --workdir /root \
+    -it jwp-ros2-latest \
     bash
