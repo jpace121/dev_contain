@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
+username=$(whoami)
+userid=$(id -u)
+
 podman run \
-    --volume /home/jimmy/Develop:/root/Develop:rw \
     --rm \
-    --workdir /root \
-    -it jwp-ros2-latest \
+    --workdir /home/$username \
+    --user $username \
+    --userns=keep-id \
+    --volume /home/$username/Develop:/home/$username/Develop:rw \
+    -it jwp-build-latest \
     bash
+
