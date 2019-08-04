@@ -22,7 +22,7 @@ buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
 
 echo "==> Dev environment depenendencies."
 buildah run --net host $container -- apt install -y emacs-nox vim-nox
-buildah run --net host $container -- apt install -y git
+buildah run --net host $container -- apt install -y git iproute2
 
 echo "==> Clone emacs cofig."
 buildah run --net host --user $username $container -- git clone git://github.com/jpace121/evil-ed.git /home/$username/.emacs.d
