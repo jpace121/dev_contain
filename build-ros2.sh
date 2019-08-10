@@ -18,3 +18,6 @@ buildah run --net host $container -- apt install -y python3-colcon-common-extens
 echo "==> Save image."
 buildah commit $container jwp-ros2-latest
 buildah rm $container
+
+#echo "===> Send to Docker."
+#buildah push jwp-ros2-latest docker-daemon:jwp-ros2:latest
