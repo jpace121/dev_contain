@@ -22,10 +22,11 @@ buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
 
 echo "==> Dev environment depenendencies."
 buildah run --net host $container -- apt install -y emacs-nox vim-nox
-buildah run --net host $container -- apt install -y git iproute2
+buildah run --net host $container -- apt install -y git iproute2 tmux
 
 echo "==> Clone emacs cofig."
 buildah run --net host --user $username $container -- git clone git://github.com/jpace121/evil-ed.git /home/$username/.emacs.d
+buildah run --net host --user $username $container -- bash /home/$username/.emacs.d/add_emc_and_tmux.sh
 
 echo "==> Save image."
 buildah commit $container jwp-build-latest
