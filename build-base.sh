@@ -32,4 +32,4 @@ buildah commit $container jwp-build-latest
 buildah rm $container
 
 #echo "===> Send to Docker."
-#buildah push jwp-build-lastest docker-daemon:jwp-build:latest
+#buildah push jwp-build-latest docker-daemon:jwp-build:latest
