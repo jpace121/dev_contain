@@ -8,7 +8,7 @@ podman run \
     --workdir /home/$username \
     --user $username \
     --userns=keep-id \
-    --volume /home/$username/Develop:/home/$username/Develop:rw \
+    --volume /home/$username/Develop:/home/$username/Develop:Z \
     -it jwp-build-latest \
     bash
 
