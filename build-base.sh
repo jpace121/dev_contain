@@ -29,8 +29,7 @@ buildah run --net host --user $username $container -- git clone git://github.com
 buildah run --net host --user $username $container -- bash /home/$username/.emacs.d/add_emc_and_tmux.sh
 
 echo "==> Save image."
-buildah commit $container jwp-build-latest
-buildah rm $container
+buildah commit --squash --rm $container jwp-build-latest
 
 #echo "===> Send to Docker."
 #buildah push jwp-build-latest docker-daemon:jwp-build:latest
