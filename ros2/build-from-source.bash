@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Build ROS 2 Eloquent from scratch.
+# https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Development-Setup/#linux-latest
 sudo apt update && sudo apt install -y \
   build-essential \
   cmake \

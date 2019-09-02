@@ -3,7 +3,17 @@
 A series of scripts I built so I can develop, build, and test code in
 containers.
 
-The scripts depend on [buildah](https://github.com/containers/buildah) and
-[podman](https://github.com/containers/libpod) instead of Docker.
+License (unless otherwise noted): Apache-2.0
 
-License: BSD-2-Clause
+## Install Dependencies
+
+Ubuntu:
+```bash
+sudo apt-get update 
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:projectatomic/ppa
+sudo apt-get update 
+
+sudo apt-get install buildah
+sudo apt-get install podman
+```
