@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+demo_nodes_cpp#!/usr/bin/env bash
 #
 # Copyright 2019 James Pace
 # 
@@ -33,14 +33,19 @@ buildah run --net host $container -- useradd -m -G sudo -s /bin/bash -u $userid 
 buildah run --net host $container -- bash -c 'echo "%sudo  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
 buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
 
+buildah run --net host $container -- apt install -y iproute2
 
 echo "==> Dev environment depenendencies."
 buildah run --net host $container -- apt install -y emacs-nox vim-nox
-buildah run --net host $container -- apt install -y git iproute2 tmux
+buildah run --net host $container -- apt install -y git tmux silversearcher-ag
 
 echo "==> Clone emacs cofig."
 buildah run --net host --user $username $container -- git clone git://github.com/jpace121/evil-ed.git /home/$username/.emacs.d
 buildah run --net host --user $username $container -- bash /home/$username/.emacs.d/add_emc_and_tmux.sh
+
+echo "==> Setting git config."
+buildah run --net host --user $username $container -- git config --global user.name "James Pace"
+buildah run --net host --user $username $container -- git config --global user.email "jpace121@gmail.com"
 
 echo "==> Save image."
 buildah commit --squash --rm $container jwp-build-latest
