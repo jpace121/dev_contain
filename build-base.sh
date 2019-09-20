@@ -1,4 +1,4 @@
-demo_nodes_cpp#!/usr/bin/env bash
+#!/usr/bin/env bash
 #
 # Copyright 2019 James Pace
 # 
