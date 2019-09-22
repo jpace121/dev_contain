@@ -52,25 +52,28 @@ shift $((OPTIND -1))
 function build_image {
     # Build a base development image for development.
 
+    echo "==> Building from image $BASE_IMAGE"
     container=$(buildah from $BASE_IMAGE)
 
     username=$(whoami)
     userid=$(id -u)
 
+    echo "==> Updating and upgrading."
     buildah run --net host $container -- apt update -y
     buildah run --net host $container -- apt upgrade -y
 
     echo "==> Grab tzdata. It gets randomly installed sometimes and needs noninteractive."
     buildah run --net host $container -- bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y tzdata'
 
+    echo "==> Set up sudo."
     buildah run --net host $container -- bash -c 'apt install -y sudo'
     buildah run --net host $container -- useradd -m -G sudo -s /bin/bash -u $userid $username
     buildah run --net host $container -- bash -c 'echo "%sudo  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
     buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
 
-    buildah run --net host $container -- apt install -y iproute2
 
     echo "==> Dev environment depenendencies."
+    buildah run --net host $container -- apt install -y iproute2
     buildah run --net host $container -- apt install -y emacs-nox vim-nox
     buildah run --net host $container -- apt install -y git tmux silversearcher-ag
 
