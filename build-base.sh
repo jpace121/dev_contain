@@ -25,7 +25,7 @@ IMAGE_NAME=$DEFAULT_IMAGE_NAME
 function useage {
     echo "Useage: build-base.sh -f BASE_IMAGE -n IMAGE_NAME"
     echo ""
-    echo "Builds an image using container with my dev environment from"
+    echo "Builds an image with my dev environment from"
     echo "preexisting image BASE_IMAGE, saved as image IMAGE_NAME."
     echo "Defaults: "
     echo "BASE_IMAGE = $DEFAULT_BASE_IMAGE IMAGE_NAME = $DEFAULT_IMAGE_NAME"
@@ -95,7 +95,7 @@ function build_image {
 
 function confirm_args {
     # If -h or related options were selected don't build.
-    if [ ! $SHOULD_BUILD ]
+    if [ $SHOULD_BUILD == 1 ]
     then
         return 1
     fi
