@@ -3,6 +3,9 @@
 A series of scripts I built so I can develop, build, and test code in
 containers.
 
+Note that this is a HUGE experiment still, don't actually depend on these
+for anything.
+
 License (unless otherwise noted): Apache-2.0
 
 ## Install Dependencies
