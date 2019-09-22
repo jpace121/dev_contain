@@ -39,6 +39,7 @@ def main():
                ' --user {username}'
                ' --userns=keep-id'
                ' --volume {volume}:{volume}:Z'
+               ' --volume /home/{username}/.ssh:/home/{username}/.ssh:Z'
                ' -it {container} bash').format(username=username, container=container, volume=volume)
     
     print('Running: {}'.format(command))
