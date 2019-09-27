@@ -22,9 +22,12 @@ def main():
     parser = argparse.ArgumentParser(description="Run a provided container using podman.")
     parser.add_argument("--container", "-c", help="Name of container to launch.")
     parser.add_argument("--volume", "-v", help="Volume on local machine to mount at same location in container.")
+    parser.add_argument("--user", "-u", help="Username to login into container as.")
     args = parser.parse_args()
 
-    username = os.environ["USER"]
+    username =  args.user
+    if not args.user:
+        username = os.environ["USER"]
 
     container = args.container
     if not args.container:
