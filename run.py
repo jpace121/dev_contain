@@ -34,14 +34,22 @@ def main():
     if not args.volume:
         volume = "/home/{}/Develop".format(username)
 
+    # Include volume for ssh keys if it exists.
+    ssh_text = ''
+    if os.path.exists('/home/{}/.ssh'.format(username)):
+        ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
+
     command = ('podman run --rm'
                ' --workdir /home/{username}'
                ' --user {username}'
                ' --userns=keep-id'
                ' --volume {volume}:{volume}:Z'
-               ' --volume /home/{username}/.ssh:/home/{username}/.ssh:Z'
-               ' -it {container} bash').format(username=username, container=container, volume=volume)
-    
+               ' {ssh_text}'
+               ' -it {container} bash').format(
+                       username=username,
+                       container=container,
+                       volume=volume,
+                       ssh_text=ssh_text)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
