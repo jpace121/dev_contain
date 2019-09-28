@@ -1,0 +1,13 @@
+# Build a base development image for development.
+echo "==> Building from image '{{ base_image }}'"
+container=$(buildah from {{ base_image }})
+
+echo "==> Updating and upgrading."
+buildah run --net host $container -- apt update -y
+buildah run --net host $container -- apt upgrade -y
+
+echo "==> Download python."
+buildah run --net host $container -- apt install -y python3 python3-pip
+
+echo "==> Save image."
+buildah commit --squash --rm $container {{ image_name }}
