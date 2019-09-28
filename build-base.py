@@ -57,6 +57,7 @@ def main():
     # Load templates.
     env = jinja2.Environment(
         autoescape=False,
+        undefined=jinja2.StrictUndefined,
         loader=jinja2.FileSystemLoader(template_dir)
     )
     # Find and render the base template.
