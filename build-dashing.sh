@@ -15,5 +15,5 @@
 # limitations under the License.
 
 # Build container for running ros2
-./build-base.py -f ros:dashing-ros-base -n jwp-dashing-latest
+./build-base.py --base_image ros:dashing-ros-base --image_name jwp-dashing-latest
 

@@ -1,5 +1,5 @@
 # Build a base development image for development.
-echo "==> Building from image $BASE_IMAGE"
+echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
 
 echo "==> Updating and upgrading."
