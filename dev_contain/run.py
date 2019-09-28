@@ -20,7 +20,7 @@ import sys
 import subprocess
 
 def run(in_args):
-    parser = argparse.ArgumentParser(prog="run", description="Run a provided container using podman.")
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+" run", description="Run a provided container using podman.")
     parser.add_argument("--container", "-c", help="Name of container to launch.")
     parser.add_argument("--volume", "-v", help="Volume on local machine to mount at same location in container.")
     parser.add_argument("--user", "-u", help="Username to login into container as.")

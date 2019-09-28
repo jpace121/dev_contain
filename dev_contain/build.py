@@ -21,7 +21,7 @@ import tempfile
 import jinja2
 
 def build(in_args):
-    parser = argparse.ArgumentParser(prog='build', description='Build a base development image from a pre-existing image.')
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' build', description='Build a base development image from a pre-existing image.')
     parser.add_argument('--base_image', help='Base image to start from.')
     parser.add_argument('--image_name', help='Name for the final image.')
     parser.add_argument('--template_dir', help='Directory containing the base template.')
