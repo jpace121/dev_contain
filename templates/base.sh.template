@@ -28,10 +28,4 @@ echo "==> Setting git config."
 buildah run --net host --user {{ username }} $container -- git config --global user.name "James Pace"
 buildah run --net host --user {{ username }} $container -- git config --global user.email "jpace121@gmail.com"
 
-echo "==> Save image."
-buildah commit --squash --rm $container {{ image_name }}
-
-{% if use_docker %}
-echo "===> Send to Docker."
-buildah push {{ image_name }} docker-daemon:{{ image_name }}:latest
-{% endif %}
+{% include 'save_image.bash.snippet' %}
