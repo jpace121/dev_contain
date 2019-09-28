@@ -16,14 +16,15 @@
 
 import argparse
 import os
+import sys
 import subprocess
 
-def main():
-    parser = argparse.ArgumentParser(description="Run a provided container using podman.")
+def run(in_args):
+    parser = argparse.ArgumentParser(prog="run", description="Run a provided container using podman.")
     parser.add_argument("--container", "-c", help="Name of container to launch.")
     parser.add_argument("--volume", "-v", help="Volume on local machine to mount at same location in container.")
     parser.add_argument("--user", "-u", help="Username to login into container as.")
-    args = parser.parse_args()
+    args = parser.parse_args(in_args)
 
     username =  args.user
     if not args.user:
@@ -57,5 +58,5 @@ def main():
     subprocess.run(command, shell=True)
 
 if __name__ == "__main__":
-    main()
+    run(sys.argv[1:])
     

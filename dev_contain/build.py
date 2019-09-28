@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 import argparse
 import subprocess
 import tempfile
 import jinja2
 
-def main():
-    parser = argparse.ArgumentParser(description='Build a base development image from a pre-existing image.')
+def build(in_args):
+    parser = argparse.ArgumentParser(prog='build', description='Build a base development image from a pre-existing image.')
     parser.add_argument('--base_image', help='Base image to start from.')
     parser.add_argument('--image_name', help='Name for the final image.')
     parser.add_argument('--template_dir', help='Directory containing the base template.')
@@ -29,7 +30,7 @@ def main():
     parser.add_argument('--user_id', help='User id to add for user in container.')
     parser.add_argument('--debug', action='store_true', help='Print templated script, but do not run it.')
     parser.add_argument('--docker', action='store_true', help='Export image to location that can be be found by Docker.')
-    args = parser.parse_args()
+    args = parser.parse_args(in_args)
  
     base_image = args.base_image
     if not base_image:
@@ -75,4 +76,4 @@ def main():
         subprocess.run(res, shell=True)
 
 if __name__ == '__main__':
-    main()
+    build(sys.argv[1:])
