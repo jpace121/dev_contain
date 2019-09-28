@@ -15,4 +15,4 @@
 # limitations under the License.
 
 # Build development image from ros2 nightly.
-./build-base.py -f osrf/ros2:nightly -n jwp-ros2-latest
+./build-base.py --base_image osrf/ros2:nightly --image_name jwp-ros2-latest
