@@ -1,4 +1,4 @@
-echo "==> Save image."
+echo "==> Saving image as '{{ image_name }}'."
 buildah commit --squash --rm $container {{ image_name }}
 
 {% if save_docker == True -%}
