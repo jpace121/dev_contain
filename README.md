@@ -20,3 +20,9 @@ sudo apt-get update
 sudo apt-get install buildah
 sudo apt-get install podman
 ```
+
+## Install Package
+```bash
+python3 setup.py install --user
+export PATH="~/.local/bin:$PATH"
+```
