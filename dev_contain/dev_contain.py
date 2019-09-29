@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import argparse
-from build import build
-from run import run
+from .build import build
+from .run import run
 import sys
 
 def main():
