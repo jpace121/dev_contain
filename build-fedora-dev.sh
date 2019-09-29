@@ -13,4 +13,4 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-./build-base.py --base_image 'fedora:31' --image_name 'jwp-fedora-latest' --template 'base-fedora.sh.template'
+dev_contain build --base_image 'fedora:31' --image_name 'jwp-fedora-latest' --template 'base-fedora.sh.template'
