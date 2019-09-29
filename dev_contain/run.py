@@ -20,23 +20,23 @@ import sys
 import subprocess
 
 def run(in_args):
-    parser = argparse.ArgumentParser(prog=sys.argv[0]+" run", description="Run a provided container using podman.")
-    parser.add_argument("--container", "-c", help="Name of container to launch.")
-    parser.add_argument("--volume", "-v", help="Volume on local machine to mount at same location in container.")
-    parser.add_argument("--user", "-u", help="Username to login into container as.")
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
+    parser.add_argument('--container', '-c', help='Name of container to launch.')
+    parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
+    parser.add_argument('--user', '-u', help='Username to login into container as.')
     args = parser.parse_args(in_args)
 
     username =  args.user
     if not args.user:
-        username = os.environ["USER"]
+        username = os.environ['USER']
 
     container = args.container
     if not args.container:
-        container = "jwp-build-latest"
+        container = 'jwp-build-latest'
         
     volume = args.volume
     if not args.volume:
-        volume = "/home/{}/Develop".format(username)
+        volume = '/home/{}/Develop'.format(username)
 
     # Include volume for ssh keys if it exists.
     ssh_text = ''
@@ -57,6 +57,6 @@ def run(in_args):
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run(sys.argv[1:])
     
