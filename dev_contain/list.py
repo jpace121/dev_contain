@@ -13,24 +13,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import argparse
-from .build import build
-from .run import run
-from .list import list_
 import sys
+import subprocess
 
-def main():
-    parser = argparse.ArgumentParser(description='Build and run containers for development.')
-    parser.add_argument('command', choices=['run', 'build', 'list'], help='Subcommand to run.')
-    parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
-    args = parser.parse_args()
+def list_(in_args):
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' list', description='List known containers.')
+    args = parser.parse_args(in_args)
+    command = 'podman images '\
+                '--sort repository '\
+                '--filter dangling=false '\
+                '--format "{{.Repository}}"'
 
-    if args.command == 'build':
-        build(args.args)
-    if args.command == 'run':
-        run(args.args)
-    if args.command == 'list':
-        list_(args.args)
+    output = subprocess.run(command, shell=True, capture_output=True)
+    all_images = output.stdout.splitlines()
+    local_images = [x for x in all_images if b'jwp' in x]
+    for image in local_images:
+        print(image.decode())
 
 if __name__ == '__main__':
-    main()
+    list_(sys.argv[1:])
+    
