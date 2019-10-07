@@ -26,7 +26,8 @@ def list_(in_args):
                 '--filter dangling=false '\
                 '--format "{{.Repository}}"'
 
-    output = subprocess.run(command, shell=True, capture_output=True)
+    output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
+        
     all_images = output.stdout.splitlines()
     local_images = [x for x in all_images if b'jwp' in x]
     for image in local_images:
