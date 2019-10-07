@@ -1,4 +1,9 @@
 from setuptools import setup
+import sys
+
+if sys.version_info < (3,):
+    print('dev_contain only supports Python 3.')
+    sys.exit(1)
 
 setup(name='dev_contain',
       version='0.0.0',
