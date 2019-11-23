@@ -22,7 +22,6 @@ import jinja2
 
 def build(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' build', description='Build a base development image from a pre-existing image.')
-    parser.add_argument('--base_image', help='Base image to start from.')
     parser.add_argument('--image_name', help='Name for the final image.')
     parser.add_argument('--template_dir', help='Directory containing the base template.')
     parser.add_argument('--template', help='Template to expand.')
@@ -32,9 +31,6 @@ def build(in_args):
     parser.add_argument('--docker', action='store_true', help='Export image to location that can be be found by Docker.')
     args = parser.parse_args(in_args)
  
-    base_image = args.base_image
-    if not base_image:
-        base_image = 'ubuntu:18.04'
     image_name = args.image_name
     if not image_name:
         image_name = 'jwp-build-latest'
@@ -63,8 +59,7 @@ def build(in_args):
     )
     # Find and render the base template.
     template = env.get_template(template)
-    res = template.render(base_image=base_image,
-                          image_name=image_name,
+    res = template.render(image_name=image_name,
                           save_docker=save_docker,
                           username=username,
                           user_id=user_id)

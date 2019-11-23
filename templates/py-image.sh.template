@@ -1,12 +1,11 @@
-# Build a base development image for development.
+# Build image for python based image manipulation.
+
+{% set base_image = 'jwp-python-latest' %}
+
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
 
-echo "==> Updating and upgrading."
-buildah run --net host $container -- apt update -y
-buildah run --net host $container -- apt upgrade -y
-
 echo "==> Download python."
-buildah run --net host $container -- apt install -y python3 python3-pip python3-opencv python3-pil
+buildah run --net host $container -- apt install -y python3-opencv python3-pil
 
 {% include 'save_image.bash.snippet' %}

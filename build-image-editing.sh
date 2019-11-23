@@ -14,5 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dev_contain build --template py-image.sh.template --base_image jwp-build-latest --image_name jwp-image-editing
+dev_contain build --template py-image.sh.template --image_name jwp-image-editing
 

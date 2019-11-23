@@ -1,0 +1,6 @@
+# Image for ROS2 dashing development
+
+{% set base_image = 'ros:dashing-ros-base' %}                                                                                                                 
+{% include 'base.sh.snippet' %}
+
+{% include 'save_image.bash.snippet' %}
