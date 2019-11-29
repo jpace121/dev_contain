@@ -1,9 +1,25 @@
 # Build a base development image for development.
+echo "==> Building from image '{{ base_image }}'"
+container=$(buildah from {{ base_image }})
 
-{% set base_image = 'ubuntu:18.04' %}
+echo "==> Updating and upgrading."
+buildah run --net host $container -- apt update -y
+buildah run --net host $container -- apt upgrade -y
 
-{% include 'base.sh.snippet' %}
+echo "==> Grab tzdata. It gets randomly installed sometimes and needs noninteractive."
+buildah run --net host $container -- bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y tzdata'
+
+echo "==> Set up sudo."
+buildah run --net host $container -- bash -c 'apt install -y sudo'
+buildah run --net host $container -- useradd -m -G sudo -s /bin/bash -u {{ user_id }} {{ username }}
+buildah run --net host $container -- bash -c 'echo "%sudo  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
+buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
+
+echo "==> Dev environment depenendencies."
+buildah run --net host $container -- apt install -y iproute2
+buildah run --net host $container -- apt install -y emacs-nox vim-nox
+buildah run --net host $container -- apt install -y git tmux silversearcher-ag
+
+{% include 'setup_env.bash.snippet' %}
 
 {% include 'save_image.bash.snippet' %}
-
-

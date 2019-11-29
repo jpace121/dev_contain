@@ -1,7 +1,4 @@
 # Image for python development
-
-{% set base_image = 'jwp-build-latest' %}
-
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
 

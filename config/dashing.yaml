@@ -1,0 +1,4 @@
+template: 'base.sh.template'
+base_image: 'ros:dashing-ros-base'
+image_name: 'jwp-dashing-latest'
+save_docker: false

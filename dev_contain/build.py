@@ -19,37 +19,48 @@ import argparse
 import subprocess
 import tempfile
 import jinja2
+import yaml
 
 def build(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' build', description='Build a base development image from a pre-existing image.')
-    parser.add_argument('--image_name', help='Name for the final image.')
-    parser.add_argument('--template_dir', help='Directory containing the base template.')
-    parser.add_argument('--template', help='Template to expand.')
-    parser.add_argument('--user', help='Username for user to add to container.')
-    parser.add_argument('--user_id', help='User id to add for user in container.')
+    parser.add_argument('--template_dir', help='Directory containing the base templates.')
     parser.add_argument('--debug', action='store_true', help='Print templated script, but do not run it.')
-    parser.add_argument('--docker', action='store_true', help='Export image to location that can be be found by Docker.')
+    parser.add_argument('config_file', help='Path to yaml file with appropriate variables.')
     args = parser.parse_args(in_args)
- 
-    image_name = args.image_name
-    if not image_name:
-        image_name = 'jwp-build-latest'
+        
+    # Grab values from config file.
+    if not os.path.exists(args.config):
+        print('Provided config file ({}) does not exist.'.format(args.config))
+        return -1
+
+    config = {}
+    try:
+        with open(args.config, 'r') as yaml_file:
+            config = yaml.safe_load(yaml_file)
+    except yaml.yamlError as err:
+        print('Failed to parse config file.')
+        if hasattr(err, 'problem_mark'):
+            print('Error Position: {} {}'.format(err.problem_mark.line+1, err.problem_mark.column+1))
+        return -1
+     
+    # Set promised values if not set in file.
+    if not config.get('template'):
+        config['template'] = 'base.sh.template'
+    if not config.get('username'):
+        config['username'] = os.getlogin()
+    if not config.get('user_id'):
+        config['user_id'] = os.getuid()
+    if not config.get('base_image'):
+        config['base_image'] = 'jwp_build_latest'
+    if not config.get('save_docker'):
+        config['save_docker'] = False
+    if not config.get('image_name'):
+        config['image_name'] = 'dev_contain'
+        
+    # Find template directory.
     template_dir = args.template_dir
     if not template_dir:
         template_dir = './templates'
-    template = args.template
-    if not template:
-        template = 'base.sh.template'
-    save_docker = args.docker
-    if not save_docker:
-        save_docker = False
-    username = args.user
-    if not username:
-        username = os.getlogin()
-    user_id = args.user_id
-    if not user_id:
-        user_id = os.getuid()
-    
 
     # Load templates.
     env = jinja2.Environment(
@@ -58,11 +69,8 @@ def build(in_args):
         loader=jinja2.FileSystemLoader(template_dir)
     )
     # Find and render the base template.
-    template = env.get_template(template)
-    res = template.render(image_name=image_name,
-                          save_docker=save_docker,
-                          username=username,
-                          user_id=user_id)
+    template = env.get_template(config['template'])
+    res = template.render(config)
     
     # Run the resulting script.
     if args.debug:

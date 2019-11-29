@@ -1,7 +1,0 @@
-# Image for ROS2 development
-
-{% set base_image = 'osrf/ros2:nightly' %}
-
-{% include 'base.sh.snippet' %}
-
-{% include 'save_image.bash.snippet' %}

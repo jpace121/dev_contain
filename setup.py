@@ -13,7 +13,7 @@ setup(name='dev_contain',
       url='dev_contain.local',
       license='Apache 2.0',
       packages=['dev_contain'],
-      install_requires=['jinja2'],
+      install_requires=['jinja2', 'pyyaml'],
       entry_points = {
         'console_scripts': ['dev_contain=dev_contain.dev_contain:main'],
       },

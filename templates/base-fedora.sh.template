@@ -1,7 +1,20 @@
+# Build a base development image for development.
+echo "==> Building from image '{{ base_image }}'"
+container=$(buildah from {{ base_image }})
 
-{% set base_image = 'fedora:31' %}
+echo "==> Updating and upgrading."
+buildah run --net host $container -- dnf upgrade -y
 
-{% include 'base-fedora.sh.snippet' %}
+echo "==> Set up sudo."
+buildah run --net host $container -- useradd -m -G wheel -s /bin/bash -u {{ user_id }} {{ username }}
+buildah run --net host $container -- bash -c 'echo "%wheel  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
+buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
+
+echo "==> Dev environment depenendencies."
+buildah run --net host $container -- dnf install -y emacs-nox vim-minimal
+buildah run --net host $container -- dnf install -y git 
+buildah run --net host $container -- dnf install -y tmux 
+buildah run --net host $container -- dnf install -y the_silver_searcher
 
 {% include 'setup_env.bash.snippet' %}
 
