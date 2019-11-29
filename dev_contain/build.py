@@ -25,7 +25,6 @@ def build(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' build', description='Build a base development image from a pre-existing image.')
     parser.add_argument('--template_dir', help='Directory containing the base templates.')
     parser.add_argument('--print', action='store_true', help='Print result of applying template. Do not run build command.')
-    parser.add_argument('--docker', action='store_true', help='Build with docker, not buildah. (Only works for Dockerfile templates.)')
     parser.add_argument('config_file', help='Path to yaml file with appropriate variables.')
     args = parser.parse_args(in_args)
         
@@ -80,17 +79,12 @@ def build(in_args):
         if '.bash' in config['template'] or '.sh' in config['template']:
             subprocess.run(res, shell=True)
         elif 'Dockerfile' in config['template']:
-            if args.docker:
-                cmd = 'docker build -t {} -f - .'.format(config['image_name'])
-            else:
-                cmd = 'buildah bud -t {} --layers -f - .'.format(config['image_name'])
-                
+            cmd = 'buildah bud -t {} --layers -f - .'.format(config['image_name'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:
             print("Not sure how to run template file. File name should contain '.sh', '.bash', or 'Dockerfile'.")
             return -1
-            
 
 if __name__ == '__main__':
     build(sys.argv[1:])
