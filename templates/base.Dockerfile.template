@@ -23,3 +23,5 @@ RUN apt install -y iproute2 \
                    silversearcher-ag
 
 {% include 'setup_env.Dockerfile.snippet' %}
+
+ENTRYPOINT tmux
