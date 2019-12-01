@@ -1,26 +1,22 @@
 # Build a base development image for development.
 FROM {{ base_image }}
 
-# Updating and upgrading.
-RUN apt update -y && \
-    apt upgrade -y
-
-# Grab tzdata. It gets randomly installed sometimes and needs noninteractive.
-RUN bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y tzdata'
+# Apt dependencies.
+RUN bash -c 'export DEBIAN_FRONTEND=noninteractive && \
+             apt update -y && \
+             apt install -y tzdata \
+                            sudo \
+                            iproute2 \
+                            emacs-nox \
+                            vim-nox \
+                            git \
+                            tmux \
+                            silversearcher-ag'
 
 # Set up sudo.
-RUN bash -c 'apt install -y sudo'
 RUN useradd -m -G sudo -s /bin/bash -u {{ user_id }} {{ username }}
 RUN bash -c 'echo "%sudo  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
 RUN chmod 0440 /etc/sudoers.d/container
-
-# Dev environment depenendencies.
-RUN apt install -y iproute2 \
-                   emacs-nox \
-                   vim-nox \
-                   git \
-                   tmux \
-                   silversearcher-ag
 
 {% include 'setup_env.Dockerfile.snippet' %}
 
