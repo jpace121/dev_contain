@@ -1,3 +1,4 @@
+set -e
 # Build image for python based image manipulation.
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
