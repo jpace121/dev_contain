@@ -24,4 +24,4 @@ RUN apt install -y iproute2 \
 
 {% include 'setup_env.Dockerfile.snippet' %}
 
-ENTRYPOINT ["tmux"]
+ENTRYPOINT "/bin/bash"
