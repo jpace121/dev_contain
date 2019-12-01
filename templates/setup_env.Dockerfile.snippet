@@ -1,7 +1,7 @@
 # Clone emacs config.
-RUN su - {{ username }} -c "git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d" && \
-    su - {{ username }} -c "bash /home/{{ username }}/.emacs.d/add_emc_and_tmux.sh"
+RUN git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d && \
+    bash /home/{{ username }}/.emacs.d/add_emc_and_tmux.sh
 
 # Setting git config.
-RUN su - {{ username }} -c "git config --global user.name 'James Pace'" && \
-    su - {{ username }} -c "git config --global user.email 'jpace121@gmail.com'"
+RUN git config --global user.name 'James Pace' && \
+    git config --global user.email 'jpace121@gmail.com'

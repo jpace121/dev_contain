@@ -5,4 +5,4 @@ if [ $# -gt 0 ]
 then
     tmux send -t container "$@" ENTER
 fi
-tmux attach -t container
+exec tmux attach -t container
