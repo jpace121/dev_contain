@@ -1,3 +1,4 @@
+set -e
 # Build a base development image for development.
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
@@ -23,6 +24,7 @@ buildah run --net host $container -- apt install -y git tmux silversearcher-ag
 {% include 'setup_env.bash.snippet' %}
 
 echo "==> Set tmux as entry point."
-buildah config --entrypoint tmux $container
+buildah config --entrypoint '["tmux"]' $container
+buildah config --cmd '' $container
 
 {% include 'save_image.bash.snippet' %}

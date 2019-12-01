@@ -49,7 +49,7 @@ def run(in_args):
                ' --userns=keep-id'
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
-               ' -it {container} bash').format(
+               ' -it {container}').format(
                        username=username,
                        container=container,
                        volume=volume,
