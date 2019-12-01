@@ -24,7 +24,8 @@ buildah run --net host $container -- apt install -y git tmux silversearcher-ag
 {% include 'setup_env.bash.snippet' %}
 
 echo "==> Set tmux as entry point."
-buildah config --entrypoint '/bin/bash' $container
+buildah copy $container './entrypoints/tmux.bash' '/tmux.bash'
+buildah config --entrypoint '["/tmux.bash"]' $container
 buildah config --cmd '' $container
 
 {% include 'save_image.bash.snippet' %}
