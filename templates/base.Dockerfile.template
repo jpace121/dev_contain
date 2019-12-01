@@ -13,7 +13,7 @@ RUN bash -c 'export DEBIAN_FRONTEND=noninteractive && \
                             tmux \
                             silversearcher-ag'
 # Set entry point.
-COPY './entrypoints/tmux.bash' '/tmux.bash'
+COPY '{{ template_dir }}/entrypoints/tmux.bash' '/tmux.bash'
 ENTRYPOINT '/tmux.bash'
 
 # Set up sudo.

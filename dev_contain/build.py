@@ -58,15 +58,15 @@ def build(in_args):
         config['image_name'] = 'dev_contain'
         
     # Find template directory.
-    template_dir = args.template_dir
-    if not template_dir:
-        template_dir = './templates'
+    config['template_dir'] = args.template_dir
+    if not config['template_dir']:
+        config['template_dir'] = './templates'
 
     # Load templates.
     env = jinja2.Environment(
         autoescape=False,
         undefined=jinja2.StrictUndefined,
-        loader=jinja2.FileSystemLoader(template_dir)
+        loader=jinja2.FileSystemLoader(config['template_dir'])
     )
     # Find and render the base template.
     template = env.get_template(config['template'])
