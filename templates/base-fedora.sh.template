@@ -18,8 +18,6 @@ buildah run --net host $container -- dnf install -y the_silver_searcher
 
 {% include 'setup_env.bash.snippet' %}
 
-echo "==> Set tmux as entry point."
-buildah config --entrypoint '/bin/bash' $container
-buildah config --cmd '' $container
+{% include 'tmux-entrypoint.sh.snippet' %}
 
 {% include 'save_image.bash.snippet' %}

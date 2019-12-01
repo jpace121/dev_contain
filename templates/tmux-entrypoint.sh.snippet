@@ -1,0 +1,4 @@
+echo "==> Set tmux as entry point."
+buildah copy $container './entrypoints/tmux.bash' '/tmux.bash'
+buildah config --entrypoint '["/tmux.bash"]' $container
+buildah config --cmd '' $container
