@@ -1,3 +1,4 @@
+set -e
 # Build a base development image for development.
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
@@ -17,5 +18,7 @@ buildah run --net host $container -- dnf install -y tmux
 buildah run --net host $container -- dnf install -y the_silver_searcher
 
 {% include 'setup_env.bash.snippet' %}
+
+{% include 'tmux-entrypoint.sh.snippet' %}
 
 {% include 'save_image.bash.snippet' %}

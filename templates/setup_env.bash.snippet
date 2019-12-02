@@ -1,4 +1,4 @@
-echo "==> Clone emacs cofig."
+echo "==> Clone emacs config."
 buildah run --net host --user {{ username }} $container -- git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d
 buildah run --net host --user {{ username }} $container -- bash /home/{{ username }}/.emacs.d/add_emc_and_tmux.sh
 

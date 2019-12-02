@@ -44,12 +44,12 @@ def run(in_args):
         ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
 
     command = ('podman run --rm'
-               ' --workdir /home/{username}'
                ' --user {username}'
+               ' --workdir /home/{username}'
                ' --userns=keep-id'
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
-               ' -it {container} bash').format(
+               ' -it {container}').format(
                        username=username,
                        container=container,
                        volume=volume,

@@ -1,0 +1,4 @@
+template: 'base.sh.template'
+base_image: 'ubuntu:18.04'
+image_name: 'jwp-build-latest'
+save_docker: false
