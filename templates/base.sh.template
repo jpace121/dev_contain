@@ -5,7 +5,6 @@ container=$(buildah from {{ base_image }})
 
 echo "==> Updating and upgrading."
 buildah run --net host $container -- apt update -y
-buildah run --net host $container -- apt upgrade -y
 
 echo "==> Grab tzdata. It gets randomly installed sometimes and needs noninteractive."
 buildah run --net host $container -- bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y tzdata'

@@ -5,7 +5,6 @@ container=$(buildah from {{ base_image }})
 
 echo "==> Updating and upgrading."
 buildah run --net host $container -- apt update -y
-buildah run --net host $container -- apt upgrade -y
 
 echo "==> Download python."
 buildah run --net host $container -- apt install -y python3 python3-pip python3-ipython

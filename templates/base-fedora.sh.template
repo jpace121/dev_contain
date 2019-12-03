@@ -3,9 +3,6 @@ set -e
 echo "==> Building from image '{{ base_image }}'"
 container=$(buildah from {{ base_image }})
 
-echo "==> Updating and upgrading."
-buildah run --net host $container -- dnf upgrade -y
-
 echo "==> Set up sudo."
 buildah run --net host $container -- useradd -m -G wheel -s /bin/bash -u {{ user_id }} {{ username }}
 buildah run --net host $container -- bash -c 'echo "%wheel  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
