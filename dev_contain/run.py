@@ -21,8 +21,8 @@ import subprocess
 
 def run(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
-    parser.add_argument('--container', '-c', help='Name of container to launch.')
-    parser.add_argument('--project', '-p', help='Name of project launched in container.')
+    parser.add_argument('--image', '-i', help='Name of image to launch.')
+    parser.add_argument('--container', '-c', help='Name of the new container.')
     parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     args = parser.parse_args(in_args)
@@ -31,17 +31,17 @@ def run(in_args):
     if not args.user:
         username = os.environ['USER']
 
-    container = args.container
-    if not args.container:
-        container = 'jwp-build-latest'
+    image = args.image
+    if not args.image:
+        image = 'jwp-build-latest'
         
     volume = args.volume
     if not args.volume:
         volume = '/home/{}/Develop'.format(username)
 
-    project = args.project
-    if not args.project:
-        project = 'dev'
+    container = args.container
+    if not args.container:
+        container = 'dev'
 
     # Include volume for ssh keys if it exists.
     ssh_text = ''
@@ -50,17 +50,18 @@ def run(in_args):
 
     command = ('podman run --rm'
                ' --user {username}'
+               ' --name {container}'
                ' --workdir /home/{username}'
                ' --userns=keep-id'
-               ' -e PROJECT_NAME={project} '
+               ' -e CONTAINER_NAME={container} '
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
-               ' -it {container}').format(
+               ' -it {image}').format(
                        username=username,
-                       container=container,
+                       image=image,
                        volume=volume,
                        ssh_text=ssh_text,
-                       project=project)
+                       container=container)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
