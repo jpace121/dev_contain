@@ -22,6 +22,7 @@ import subprocess
 def run(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
     parser.add_argument('--container', '-c', help='Name of container to launch.')
+    parser.add_argument('--project', '-p', help='Name of project launched in container.')
     parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     args = parser.parse_args(in_args)
@@ -38,6 +39,10 @@ def run(in_args):
     if not args.volume:
         volume = '/home/{}/Develop'.format(username)
 
+    project = args.project
+    if not args.project:
+        project = 'dev'
+
     # Include volume for ssh keys if it exists.
     ssh_text = ''
     if os.path.exists('/home/{}/.ssh'.format(username)):
@@ -47,13 +52,15 @@ def run(in_args):
                ' --user {username}'
                ' --workdir /home/{username}'
                ' --userns=keep-id'
+               ' -e PROJECT_NAME={project} '
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
                ' -it {container}').format(
                        username=username,
                        container=container,
                        volume=volume,
-                       ssh_text=ssh_text)
+                       ssh_text=ssh_text,
+                       project=project)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
