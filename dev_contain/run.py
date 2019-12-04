@@ -49,7 +49,7 @@ def run(in_args):
         ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
 
     # Attach with 
-    # podman exec -i -t dev tmux attach
+    # podman exec -i -t dev tmux new -A -s dev
     command = ('podman run -d'
                ' --user {username}'
                ' --name {container}'
