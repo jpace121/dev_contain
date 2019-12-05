@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Make sure used environment variables are set.
-export CONTAINER_NAME="${CONTAINER_NAME:=dev}"
+# Make sure used environment variable is set.
+export DEV_CONTAIN_CONTAINER_NAME="${DEV_CONTAIN_CONTAINER_NAME:=dev}"
 # Make new session.
-tmux new -s $CONTAINER_NAME -d
+tmux new -s $DEV_CONTAIN_CONTAINER_NAME -d
 exec sleep +Inf

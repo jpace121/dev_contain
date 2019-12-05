@@ -55,7 +55,7 @@ def run(in_args):
                ' --name {container}'
                ' --workdir /home/{username}'
                ' --userns=keep-id'
-               ' -e CONTAINER_NAME={container} '
+               ' -e DEV_CONTAIN_CONTAINER_NAME={container} '
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
                ' {image}').format(
