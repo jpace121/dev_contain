@@ -1,7 +1,11 @@
 echo "==> Clone emacs config."
-buildah run --net host --user {{ username }} $container -- git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d
-buildah run --net host --user {{ username }} $container -- bash /home/{{ username }}/.emacs.d/add_emc_and_tmux.sh
+buildah run --user {{ username }} $container -- git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d
+
+echo "==> Configure emc and tmux."
+buildah copy --chown {{ username }}:{{ user_id }} $container '{{ template_dir }}/config/tmux.conf' '/home/{{ username }}/.tmux.conf'
+buildah run --user {{ username }} $container -- bash -c "echo 'alias emc='\''emacsclient -t --alternate-editor=\"\"'\''' >> ~/.bashrc"
+buildah config --env TERM=xterm-256color $container
 
 echo "==> Setting git config."
-buildah run --net host --user {{ username }} $container -- git config --global user.name "James Pace"
-buildah run --net host --user {{ username }} $container -- git config --global user.email "jpace121@gmail.com"
+buildah run --user {{ username }} $container -- git config --global user.name "James Pace"
+buildah run --user {{ username }} $container -- git config --global user.email "jpace121@gmail.com"
