@@ -29,7 +29,7 @@ def attach(in_args):
     if args.container:
         container = args.container
     
-    command = '$DEV_CONTAIN_ATTACH_CMD'
+    command = 'eval $DEV_CONTAIN_ATTACH_CMD'
     if args.command:
         command = args.command
 

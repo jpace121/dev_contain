@@ -1,4 +1,5 @@
 echo "==> Set tmux as entry point."
 buildah copy $container '{{ template_dir }}/entrypoints/tmux.bash' '/tmux.bash'
+buildah copy $container '{{ template_dir }}/scripts/tmux-attach.bash' '/tmux-attach'
 buildah config --entrypoint '["/tmux.bash"]' $container
 buildah config --cmd '' $container

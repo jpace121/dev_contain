@@ -19,19 +19,36 @@ import sys
 import subprocess
 
 def list_(in_args):
-    parser = argparse.ArgumentParser(prog=sys.argv[0]+' list', description='List known containers.')
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' list', description='List known containers or images.')
+    parser.add_argument('type', choices=['images', 'containers'], help='Whether to list containers or images.')
+    parser.add_argument('--all', '-a', action='store_true', help='Also list containers/images not labeled by dev_contain.')
     args = parser.parse_args(in_args)
-    command = 'podman images '\
-                '--sort repository '\
-                '--filter dangling=false '\
-                '--format "{{.Repository}}"'
+
+    filter_text = '--filter label=com.github.jpace121.dev_contain.compat=true '
+    if args.all:
+        filter_text = ''
+
+    # Note that python format strings collide with the syntax for the format
+    # commands.
+    command = ''
+    if args.type == 'images':
+        command = 'podman images '\
+                    '--sort repository '\
+                    + filter_text + \
+                    '--filter dangling=false '\
+                    '--format "{{.Repository}}"'
+    elif args.type == 'containers':
+        command = 'podman ps '\
+                  '--sort runningfor '\
+                  + filter_text + \
+                  '--format "{{.Names}}   {{.Created}}   {{.Status}}    {{.Image}}"'
+        print('Name  Created   Status   Image')
+        print('------------------------------')
+        
 
     output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
-        
-    all_images = output.stdout.splitlines()
-    local_images = [x for x in all_images if b'jwp' in x]
-    for image in local_images:
-        print(image.decode())
+    for line in output.stdout.splitlines():
+        print(line.decode())
 
 if __name__ == '__main__':
     list_(sys.argv[1:])
