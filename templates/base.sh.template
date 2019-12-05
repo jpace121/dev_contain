@@ -25,4 +25,8 @@ buildah run --net host $container -- apt install -y git tmux silversearcher-ag
 
 {% include 'tmux-entrypoint.sh.snippet' %}
 
+echo "==> Set Default dev_contain environment variables."
+buildah config --env CONTAINER_NAME=dev $container
+buildah config --env DEV_CONTAIN_ATTACH_CMD='tmux new -A -s $CONTAINER_NAME' $container
+
 {% include 'save_image.bash.snippet' %}
