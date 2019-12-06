@@ -12,15 +12,23 @@ RUN bash -c 'export DEBIAN_FRONTEND=noninteractive && \
                             git \
                             tmux \
                             silversearcher-ag'
-# Set entry point.
-COPY '{{ template_dir }}/entrypoints/wait.bash' '/wait.bash'
-ENTRYPOINT '/wait.bash'
 
 # Set up sudo.
 RUN useradd -m -G sudo -s /bin/bash -u {{ user_id }} {{ username }}
 RUN bash -c 'echo "%sudo  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
 RUN chmod 0440 /etc/sudoers.d/container
 
+# Set up entrypoint. 
+{% include 'wait_entrypoint.Dockerfile.snippet' %}
+
+# Set up attach command.
+COPY '{{ template_dir }}/scripts/tmux-attach.bash' '/tmux-attach'
+ENV DEV_CONTAIN_ATTACH_CMD=/tmux-attach
+
 # Change user and set up environment.
 USER {{ username }}
 {% include 'setup_env.Dockerfile.snippet' %}
+RUN touch /home/{{ username }}/.sudo_as_admin_successful
+
+# Set label
+{% include 'dev_contain_label.Dockerfile.snippet' %}
