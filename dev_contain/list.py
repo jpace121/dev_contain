@@ -41,10 +41,7 @@ def list_(in_args):
         command = 'podman ps '\
                   '--sort runningfor '\
                   + filter_text + \
-                  '--format "{{.Names}}   {{.Created}}   {{.Status}}    {{.Image}}"'
-        print('Name  Created   Status   Image')
-        print('------------------------------')
-        
+                  '--format "{{.Names}}    {{.Status}}    {{.Image}}"'
 
     output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
     for line in output.stdout.splitlines():
