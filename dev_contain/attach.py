@@ -17,6 +17,7 @@
 import argparse
 import sys
 import subprocess
+import shlex
 
 def attach(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' attach', description='Attach to a running container using podman.')
@@ -33,13 +34,20 @@ def attach(in_args):
     if args.command:
         command = args.command
 
-    podman_command = ('podman exec -i -t'
-                      ' {container}'
-                      ' bash -c \'{command}\'').format(
-                          container=container,
-                          command=command)
-    print('Running: {}'.format(podman_command))
-    subprocess.run(podman_command, shell=True)
+    check_command = 'podman inspect ' + container  +' -f "{{ .State.Running }}"'
+    check_result = subprocess.Popen(shlex.split(check_command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    is_running = check_result.stdout.read().decode('ascii').strip() == 'true'
+
+    if is_running:
+        podman_command = ('podman exec -i -t'
+                        ' {container}'
+                        ' bash -c \'{command}\'').format(
+                            container=container,
+                            command=command)
+        print('Running: {}'.format(podman_command))
+        subprocess.run(podman_command, shell=True)
+    else:
+        print('Container {} is not started. Please create or start it.'.format(container))
 
 if __name__ == '__main__':
     attach(sys.argv[1:])
