@@ -7,6 +7,7 @@ echo "==> Set up sudo."
 buildah run --net host $container -- useradd -m -G wheel -s /bin/bash -u {{ user_id }} {{ username }}
 buildah run --net host $container -- bash -c 'echo "%wheel  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/container'
 buildah run --net host $container -- chmod 0440 /etc/sudoers.d/container
+buildah run --user {{ username }} $container -- touch /home/{{ username }}/.sudo_as_admin_successful
 
 echo "==> Dev environment depenendencies."
 buildah run --net host $container -- dnf install -y emacs-nox vim-minimal
@@ -16,6 +17,12 @@ buildah run --net host $container -- dnf install -y the_silver_searcher
 
 {% include 'setup_env.bash.snippet' %}
 
-{% include 'tmux-entrypoint.sh.snippet' %}
+{% include 'wait_entrypoint.sh.snippet' %}
+
+echo "==> Setup attach command."
+buildah copy $container '{{ template_dir }}/scripts/tmux-attach.bash' '/tmux-attach'
+buildah config --env DEV_CONTAIN_ATTACH_CMD=/tmux-attach $container
+
+{% include 'dev_contain_label.sh.snippet' %}
 
 {% include 'save_image.bash.snippet' %}

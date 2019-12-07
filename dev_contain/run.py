@@ -48,15 +48,15 @@ def run(in_args):
     if os.path.exists('/home/{}/.ssh'.format(username)):
         ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
 
-    command = ('podman run --rm'
+    command = ('podman run -d'
                ' --user {username}'
                ' --name {container}'
                ' --workdir /home/{username}'
                ' --userns=keep-id'
-               ' -e CONTAINER_NAME={container} '
+               ' -e DEV_CONTAIN_CONTAINER_NAME={container} '
                ' --volume {volume}:{volume}:Z'
                ' {ssh_text}'
-               ' -it {image}').format(
+               ' {image}').format(
                        username=username,
                        image=image,
                        volume=volume,

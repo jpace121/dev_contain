@@ -1,0 +1,3 @@
+# Set tmux as entry point.
+COPY '{{ template_dir }}/entrypoints/wait.bash' '/wait.bash'
+ENTRYPOINT ["/wait.bash"]

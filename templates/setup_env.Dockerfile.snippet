@@ -1,7 +1,11 @@
 # Clone emacs config.
 RUN git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.d && \
-    bash /home/{{ username }}/.emacs.d/add_emc_and_tmux.sh
+    bash -c "echo 'alias emc='\''emacsclient -t --alternate-editor=\"\"'\''' >> ~/.bashrc"
 
-# Setting git config.
+# Configure tmux.
+COPY --chown={{ username }}:{{ user_id }} '{{ template_dir }}/config/tmux.conf' '/home/{{ username }}/.tmux.conf'
+ENV TERM=xterm-256color
+
+# Set git config.
 RUN git config --global user.name 'James Pace' && \
     git config --global user.email 'jpace121@gmail.com'
