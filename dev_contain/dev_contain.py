@@ -18,11 +18,12 @@ from .build import build
 from .run import run
 from .list import list_
 from .attach import attach
+from .clean import clean
 import sys
 
 def main():
     parser = argparse.ArgumentParser(description='Build and run containers for development.')
-    parser.add_argument('command', choices=['run', 'build', 'list', 'attach'], help='Subcommand to run.')
+    parser.add_argument('command', choices=['run', 'build', 'list', 'attach', 'clean'], help='Subcommand to run.')
     parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
     args = parser.parse_args()
 
@@ -34,6 +35,8 @@ def main():
         list_(args.args)
     if args.command == 'attach':
         attach(args.args)
+    if args.command == 'clean':
+        clean(args.args)
 
 if __name__ == '__main__':
     main()
