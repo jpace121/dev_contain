@@ -38,7 +38,7 @@ def list_(in_args):
                     '--filter dangling=false '\
                     '--format "{{.Repository}}"'
     elif args.type == 'containers':
-        command = 'podman ps '\
+        command = 'podman ps -a '\
                   '--sort runningfor '\
                   + filter_text + \
                   '--format "{{.Names}}    {{.Status}}    {{.Image}}"'
