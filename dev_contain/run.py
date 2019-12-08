@@ -25,6 +25,7 @@ def run(in_args):
     parser.add_argument('--container', '-c', help='Name of the new container.')
     parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
+    parser.add_argument('--graphics' ,'-X', action='store_true', help='Forward graphics.')
     args = parser.parse_args(in_args)
 
     username =  args.user
@@ -43,6 +44,10 @@ def run(in_args):
     if not args.container:
         container = 'dev'
 
+    graphics_text = ''
+    if args.graphics:
+        graphics_text = set_up_graphics_forwards()
+
     # Include volume for ssh keys if it exists.
     ssh_text = ''
     if os.path.exists('/home/{}/.ssh'.format(username)):
@@ -53,17 +58,42 @@ def run(in_args):
                ' --name {container}'
                ' --workdir /home/{username}'
                ' --userns=keep-id'
-               ' -e DEV_CONTAIN_CONTAINER_NAME={container} '
+               ' --ipc=host'
+               ' --net=host'
+               ' -e DEV_CONTAIN_CONTAINER_NAME={container}'
                ' --volume {volume}:{volume}:Z'
-               ' {ssh_text}'
+               ' {ssh_text} {graphics_text}'
                ' {image}').format(
                        username=username,
                        image=image,
                        volume=volume,
                        ssh_text=ssh_text,
+                       graphics_text=graphics_text,
                        container=container)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
+
+def set_up_graphics_forwards():
+    # XOrg
+    xorg = (' -e DISPLAY=$DISPLAY'
+            ' -v /tmp/.X11-unix:/tmp/.X11-unix:rw')
+    # Wayland
+    wayland = (' -e XDG_RUNTIME_DIR=/tmp'
+               ' -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY'
+               ' -v $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY')
+    # (User) dbus socket.
+    dbus = ''
+    # What kind of socket is it?
+    dbus_address = os.environ.get('DBUS_SESSION_BUS_ADDRESS')
+    # If a real path, need to mount it. Other wise --net=host takes care of it.
+    if 'unix:path' in dbus_address:
+        dbus_path = dbus_address.split('=')[1]
+        dbus = dbus + '--volume {path}:{path}'.format(path=dbus_path)
+    # Regardless need to know where to look.
+    dbus = dbus + ' --env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"'
+
+    return xorg + ' ' + wayland + ' ' + dbus
+    
 
 if __name__ == '__main__':
     run(sys.argv[1:])
