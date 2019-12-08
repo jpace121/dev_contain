@@ -24,6 +24,7 @@ def run(in_args):
     parser.add_argument('--image', '-i', help='Name of image to launch.')
     parser.add_argument('--container', '-c', help='Name of the new container.')
     parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
+    parser.add_argument('--workdir', '-d', help='Directory to start in.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics' ,'-X', action='store_true', help='Forward graphics.')
     args = parser.parse_args(in_args)
@@ -44,6 +45,10 @@ def run(in_args):
     if not args.container:
         container = 'dev'
 
+    workdir = args.workdir
+    if not workdir:
+        workdir = '/home/{}'.format(username)
+
     graphics_text = ''
     if args.graphics:
         graphics_text = set_up_graphics_forwards()
@@ -56,7 +61,7 @@ def run(in_args):
     command = ('podman run -d'
                ' --user {username}'
                ' --name {container}'
-               ' --workdir /home/{username}'
+               ' --workdir {workdir}'
                ' --userns=keep-id'
                ' --ipc=host'
                ' --net=host'
@@ -69,7 +74,8 @@ def run(in_args):
                        volume=volume,
                        ssh_text=ssh_text,
                        graphics_text=graphics_text,
-                       container=container)
+                       container=container,
+                       workdir=workdir)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
