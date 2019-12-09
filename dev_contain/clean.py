@@ -19,7 +19,7 @@ import sys
 import subprocess
 
 def clean(in_args):
-    parser = argparse.ArgumentParser(prog=sys.argv[0]+' attach', description='Prune system of uneeded containers and images.')
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' clean', description='Prune system of uneeded containers and images.')
     args = parser.parse_args(in_args)
 
     run_and_log('Removing buildah containers.', 'buildah rm --all')
