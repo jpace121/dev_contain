@@ -17,13 +17,29 @@
 import argparse
 import sys
 import subprocess
+import shlex
 
 def clean(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' clean', description='Prune system of uneeded containers and images.')
+    parser.add_argument('--buildah', '-b', action='store_true', help='Cleanup after buildah.')
+    parser.add_argument('--container', '-c', help='Stop and remove a running container.')
     args = parser.parse_args(in_args)
 
-    run_and_log('Removing buildah containers.', 'buildah rm --all')
-    run_and_log('Pruning buildah images.', 'buildah rmi --prune')
+    if(args.buildah):
+        run_and_log('Removing buildah containers.', 'buildah rm --all')
+        run_and_log('Pruning buildah images.', 'buildah rmi --prune')
+    if(args.container):
+        # Is container running?
+        check_command = 'podman inspect ' + args.container  +' -f "{{ .State.Running }}"'
+        check_result = subprocess.Popen(shlex.split(check_command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        is_running = check_result.stdout.read().decode('ascii').strip() == 'true'
+        # If so stop it.
+        if(is_running):
+            stop_command = 'podman stop --timeout 1 {}'.format(args.container)
+            run_and_log('Stopping container.', stop_command)
+        # rm container.
+        remove_command = 'podman rm {}'.format(args.container)
+        run_and_log('Stopping container.', remove_command)
 
 def run_and_log(comment, command):
     print(comment)
