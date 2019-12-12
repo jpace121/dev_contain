@@ -23,7 +23,7 @@ def run(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
     parser.add_argument('--image', '-i', help='Name of image to launch.')
     parser.add_argument('--container', '-c', help='Name of the new container.')
-    parser.add_argument('--volume', '-v', help='Volume on local machine to mount at same location in container.')
+    parser.add_argument('--volume', '-v', action='append', help='Volume on local machine to mount at same location in container.')
     parser.add_argument('--workdir', '-d', help='Directory to start in.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics' ,'-X', action='store_true', help='Forward graphics.')
@@ -36,10 +36,10 @@ def run(in_args):
     image = args.image
     if not args.image:
         image = 'jwp-build-latest'
-        
-    volume = args.volume
+
+    volumes = args.volume
     if not args.volume:
-        volume = '/home/{}/Develop'.format(username)
+        volumes = ['/home/{}/Develop'.format(username)]
 
     container = args.container
     if not args.container:
@@ -58,6 +58,10 @@ def run(in_args):
     if os.path.exists('/home/{}/.ssh'.format(username)):
         ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
 
+    volume_text = ''
+    for volume in volumes:
+        volume_text = volume_text + ' --volume {volume}:{volume}:Z'.format(volume=volume)
+
     command = ('podman run -d'
                ' --user {username}'
                ' --name {container}'
@@ -66,12 +70,12 @@ def run(in_args):
                ' --ipc=host'
                ' --net=host'
                ' -e DEV_CONTAIN_CONTAINER_NAME={container}'
-               ' --volume {volume}:{volume}:Z'
+               ' {volume_text}'
                ' {ssh_text} {graphics_text}'
                ' {image}').format(
                        username=username,
                        image=image,
-                       volume=volume,
+                       volume_text=volume_text,
                        ssh_text=ssh_text,
                        graphics_text=graphics_text,
                        container=container,
