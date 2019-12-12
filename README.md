@@ -10,7 +10,7 @@ License (unless otherwise noted): Apache-2.0
 
 ## Install Dependencies
 
-Ubuntu:
+Ubuntu 18.04:
 ```bash
 sudo apt-get update 
 sudo apt-get install software-properties-common
@@ -20,6 +20,8 @@ sudo apt-get update
 sudo apt-get install buildah
 sudo apt-get install podman
 ```
+
+Note buildah and podman don't seem to work on 16.04.
 
 ## Install Package
 ```bash
