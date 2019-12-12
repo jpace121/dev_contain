@@ -13,15 +13,18 @@ License (unless otherwise noted): Apache-2.0
 Ubuntu 18.04:
 ```bash
 sudo apt-get update 
-sudo apt-get install software-properties-common
+sudo apt-get install software-properties-common uidmap slirp4netns runc
 sudo add-apt-repository ppa:projectatomic/ppa
 sudo apt-get update 
 
 sudo apt-get install buildah
 sudo apt-get install podman
+
+echo -e "[registries.search]\nregistries = ['docker.io', 'quay.io']" | sudo tee /etc/containers/registries.conf
 ```
 
-Note buildah and podman don't seem to work on 16.04.
+On Ubuntu 16.04 I've ran into problems with file perimissions running rootless?
+
 
 ## Install Package
 ```bash
