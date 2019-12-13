@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import argparse
-from .build import build
-from .run import run
-from .list import list_
-from .attach import attach
-from .clean import clean
+from dev_contain.build import build
+from dev_contain.run import run
+from dev_contain.list import list_
+from dev_contain.attach import attach
+from dev_contain.clean import clean
 import sys
 
 def main():

@@ -18,6 +18,7 @@ import argparse
 import os
 import sys
 import subprocess
+import dev_contain.common as common
 
 def run(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
@@ -28,6 +29,8 @@ def run(in_args):
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics' ,'-X', action='store_true', help='Forward graphics.')
     args = parser.parse_args(in_args)
+
+    manager = common.get_manager()
 
     username =  args.user
     if not args.user:
@@ -53,6 +56,11 @@ def run(in_args):
     if args.graphics:
         graphics_text = set_up_graphics_forwards()
 
+    # podman needs userns set to keep-id for volumes to work.
+    userns_text = ''
+    if manager == 'podman':
+        userns_text = '--userns=keep-id'
+
     # Include volume for ssh keys if it exists.
     ssh_text = ''
     if os.path.exists('/home/{}/.ssh'.format(username)):
@@ -62,24 +70,26 @@ def run(in_args):
     for volume in volumes:
         volume_text = volume_text + ' --volume {volume}:{volume}:Z'.format(volume=volume)
 
-    command = ('podman run -d'
+    command = ('{manager} run -d'
                ' --user {username}'
                ' --name {container}'
+               ' {userns_text}'
                ' --workdir {workdir}'
-               ' --userns=keep-id'
                ' --ipc=host'
                ' --net=host'
                ' -e DEV_CONTAIN_CONTAINER_NAME={container}'
                ' {volume_text}'
                ' {ssh_text} {graphics_text}'
                ' {image}').format(
+                       manager=manager,
                        username=username,
                        image=image,
                        volume_text=volume_text,
                        ssh_text=ssh_text,
                        graphics_text=graphics_text,
                        container=container,
-                       workdir=workdir)
+                       workdir=workdir,
+                       userns_text=userns_text)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 

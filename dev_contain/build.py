@@ -20,6 +20,7 @@ import subprocess
 import jinja2
 import shlex
 import yaml
+import dev_contain.common as common
 
 def build(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' build', description='Build a base development image from a pre-existing image.')
@@ -27,6 +28,8 @@ def build(in_args):
     parser.add_argument('--print', action='store_true', help='Print result of applying template. Do not run build command.')
     parser.add_argument('config_file', help='Path to yaml file with appropriate variables.')
     args = parser.parse_args(in_args)
+
+    builder = common.get_builder()
         
     # Grab values from config file.
     if not os.path.exists(args.config_file):
@@ -76,13 +79,19 @@ def build(in_args):
     if args.print:
         print(res)
     else:
-        if '.bash' in config['template'] or '.sh' in config['template']:
+        if '.bash' in config['template'] or '.sh' in config['template'] and builder=='buildah':
             subprocess.run(res, shell=True)
         elif 'Dockerfile' in config['template']:
-            cmd = 'buildah bud -t {} --layers -f - .'.format(config['image_name'])
+            cmd = ''
+            if builder == 'docker':
+                cmd = 'docker build -t {image_name} -f - .'.format(image_name=config['image_name'])
+            else:
+                cmd = 'buildah bud -t {image_name} --layers -f - .'.format(image_name=config['image_name'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:
+            if builder!='buildah':
+                print('builder is {}. Only buildah can build from .sh or .bash files.'.format(builder))
             print("Not sure how to run template file. File name should contain '.sh', '.bash', or 'Dockerfile'.")
             return -1
 
