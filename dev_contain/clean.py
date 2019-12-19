@@ -42,10 +42,12 @@ def clean(in_args):
         is_running = check_result.stdout.read().decode('ascii').strip() == 'true'
         # If so stop it.
         if(is_running):
-            stop_command = manager + ' stop {}'.format(args.container)
+            stop_command = '{manager} stop {container}'.format(manager=manager,
+                                                               container=args.container)
             run_and_log('Stopping container.', stop_command)
         # rm container.
-        remove_command = manager + ' rm {}'.format(args.container)
+        remove_command = '{manager} rm {container}'.format(manager=manager,
+                                                           container=args.container)
         run_and_log('Stopping container.', remove_command)
 
 def run_and_log(comment, command):

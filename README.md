@@ -39,7 +39,7 @@ sudo groupadd docker
 ```
 
 Instead of adding myself to the docker group, I've been adding myself
-temporarily with, though they're are gotchas with this.
+temporarily with the following command, which will open a new shell.
 ```bash
 sudo -i -g docker
 ```
@@ -48,6 +48,23 @@ For  `dev_contain` to use `Docker`, set the environment variables
 
 ## Install Package
 ```bash
-python3 setup.py install --user
+pip3 install --user .
 export PATH="~/.local/bin:$PATH"
+```
+
+### Development
+First time:
+```bash
+sudo apt install python3-venv
+python3 -m venv .
+source bin/activate
+pip install -e .
+deactivate
+```
+
+After making changes:
+```bash
+source bin/activate
+... test ...
+deactivate
 ```
