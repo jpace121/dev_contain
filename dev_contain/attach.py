@@ -18,6 +18,8 @@ import argparse
 import sys
 import subprocess
 import shlex
+import dev_contain.common as common
+
 
 def attach(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' attach', description='Attach to a running container using podman.')
@@ -25,6 +27,7 @@ def attach(in_args):
     parser.add_argument('--command', '-c', help='Command if not default in image to run instead of attaching.')
     args = parser.parse_args(in_args)
 
+    manager = common.get_manager()
 
     container = 'dev'
     if args.container:
@@ -34,14 +37,15 @@ def attach(in_args):
     if args.command:
         command = args.command
 
-    check_command = 'podman inspect ' + container  +' -f "{{ .State.Running }}"'
+    check_command = manager + ' inspect ' + container  +' -f "{{ .State.Running }}"'
     check_result = subprocess.Popen(shlex.split(check_command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     is_running = check_result.stdout.read().decode('ascii').strip() == 'true'
 
     if is_running:
-        podman_command = ('podman exec -i -t'
+        podman_command = ('{manager} exec -i -t'
                         ' {container}'
                         ' bash -c \'{command}\'').format(
+                            manager=manager,
                             container=container,
                             command=command)
         print('Running: {}'.format(podman_command))

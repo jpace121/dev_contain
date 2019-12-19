@@ -17,12 +17,15 @@
 import argparse
 import sys
 import subprocess
+import dev_contain.common as common
 
 def list_(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' list', description='List known containers or images.')
     parser.add_argument('type', choices=['images', 'containers'], help='Whether to list containers or images.')
     parser.add_argument('--all', '-a', action='store_true', help='Also list containers/images not labeled by dev_contain.')
     args = parser.parse_args(in_args)
+
+    manager = common.get_manager()
 
     filter_text = '--filter label=com.github.jpace121.dev_contain.compat=true '
     if args.all:
@@ -32,14 +35,12 @@ def list_(in_args):
     # commands.
     command = ''
     if args.type == 'images':
-        command = 'podman images '\
-                    '--sort repository '\
+        command = manager + ' images '\
                     + filter_text + \
                     '--filter dangling=false '\
                     '--format "{{.Repository}}"'
     elif args.type == 'containers':
-        command = 'podman ps -a '\
-                  '--sort runningfor '\
+        command = manager + ' ps -a '\
                   + filter_text + \
                   '--format "{{.Names}}    {{.Status}}    {{.Image}}"'
 
