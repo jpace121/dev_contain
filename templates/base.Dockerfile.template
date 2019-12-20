@@ -22,7 +22,7 @@ RUN chmod 0440 /etc/sudoers.d/container
 {% include 'wait_entrypoint.Dockerfile.snippet' %}
 
 # Set up attach command.
-COPY '{{ template_dir }}/scripts/tmux-attach.bash' '/tmux-attach'
+COPY scripts/tmux-attach.bash /tmux-attach
 ENV DEV_CONTAIN_ATTACH_CMD=/tmux-attach
 
 # Change user and set up environment.

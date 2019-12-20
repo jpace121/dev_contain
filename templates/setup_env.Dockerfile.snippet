@@ -3,7 +3,7 @@ RUN git clone git://github.com/jpace121/evil-ed.git /home/{{ username }}/.emacs.
     bash -c "echo 'alias emc='\''emacsclient -t --alternate-editor=\"\"'\''' >> ~/.bashrc"
 
 # Configure tmux.
-COPY --chown={{ username }}:{{ user_id }} '{{ template_dir }}/config/tmux.conf' '/home/{{ username }}/.tmux.conf'
+COPY --chown={{ username }}:{{ user_id }} config/tmux.conf /home/{{ username }}/.tmux.conf
 ENV TERM=xterm-256color
 
 # Set git config.

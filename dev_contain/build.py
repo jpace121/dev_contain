@@ -84,9 +84,11 @@ def build(in_args):
         elif 'Dockerfile' in config['template']:
             cmd = ''
             if builder == 'docker':
-                cmd = 'docker build -t {image_name} -f - .'.format(image_name=config['image_name'])
+                cmd = 'docker build -t {image_name} -f - {template_dir}'.format(image_name=config['image_name'],
+                                                                                template_dir=config['template_dir'])
             else:
-                cmd = 'buildah bud -t {image_name} --layers -f - .'.format(image_name=config['image_name'])
+                cmd = 'buildah bud -t {image_name} --layers -f - {template_dir}'.format(image_name=config['image_name'],
+                                                                                        template_dir=config['template_dir'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:
