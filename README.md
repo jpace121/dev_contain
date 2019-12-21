@@ -43,6 +43,9 @@ temporarily with the following command, which will open a new shell.
 ```bash
 sudo -i -g docker
 ```
+Note if using the above method to join the Docker group, X forwarding
+does not work.
+
 For  `dev_contain` to use `Docker`, set the environment variables
 `DEV_CONTAIN_BUILDER` and `DEV_CONTAIN_MANAGER` to `docker`.
 
