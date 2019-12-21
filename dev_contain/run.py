@@ -101,16 +101,17 @@ def set_up_graphics_forwards():
     wayland = (' -e XDG_RUNTIME_DIR=/tmp'
                ' -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY'
                ' -v $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY')
-    # (User) dbus socket.
+    # (User) dbus socket, if we can find it...
     dbus = ''
-    # What kind of socket is it?
     dbus_address = os.environ.get('DBUS_SESSION_BUS_ADDRESS')
-    # If a real path, need to mount it. Other wise --net=host takes care of it.
-    if 'unix:path' in dbus_address:
-        dbus_path = dbus_address.split('=')[1]
-        dbus = dbus + '--volume {path}:{path}'.format(path=dbus_path)
-    # Regardless need to know where to look.
-    dbus = dbus + ' --env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"'
+    if dbus_address:
+        # What kind of socket is it?
+        # If a real path, need to mount it. Otherwise --net=host takes care of it.
+        if 'unix:path' in dbus_address:
+            dbus_path = dbus_address.split('=')[1]
+            dbus = dbus + '--volume {path}:{path}'.format(path=dbus_path)
+        # Regardless need to know where to look.
+        dbus = dbus + ' --env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"'
 
     return xorg + ' ' + wayland + ' ' + dbus
     
