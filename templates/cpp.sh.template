@@ -1,0 +1,12 @@
+set -e
+# Image for python development
+echo "==> Building from image '{{ base_image }}'"
+container=$(buildah from {{ base_image }})
+
+echo "==> Updating."
+buildah run --net host $container -- apt update -y
+
+echo "==> Install."
+buildah run --net host $container -- apt install -y cmake clang libboost-all-dev
+
+{% include 'save_image.bash.snippet' %}

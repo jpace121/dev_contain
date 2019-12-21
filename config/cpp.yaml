@@ -1,0 +1,4 @@
+template: 'cpp.sh.template'
+base_image: 'jwp-build-latest'
+image_name: 'jwp-cpp-latest'
+save_docker: false
