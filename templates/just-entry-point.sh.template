@@ -1,9 +1,0 @@
-set -e
-# Build a base development image for development.
-echo "==> Building from image '{{ base_image }}'"
-container=$(buildah from {{ base_image }})
-
-{% include 'tmux-entrypoint.sh.snippet' %}
-
-echo "==> Saving image as '{{ image_name }}'."
-buildah commit --rm $container {{ image_name }}

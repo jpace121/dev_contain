@@ -1,9 +1,0 @@
-set -e
-# Build image for python based image manipulation.
-echo "==> Building from image '{{ base_image }}'"
-container=$(buildah from {{ base_image }})
-
-echo "==> Download python."
-buildah run --net host $container -- apt install -y python3-opencv python3-pil
-
-{% include 'save_image.bash.snippet' %}

@@ -1,5 +1,0 @@
-template: 'golang.sh.template'
-base_image: 'jwp-build-latest'
-image_name: 'jwp-golang-latest'
-save_docker: false
-go_path: '~/Develop/go'

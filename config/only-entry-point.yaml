@@ -1,3 +1,0 @@
-template: 'just-entry-point.sh.template'
-base_image: 'jwp-build-latest'
-image_name: 'jwp-entrypoint'

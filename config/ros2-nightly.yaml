@@ -1,4 +1,0 @@
-template: 'base.sh.template'
-base_image: 'osrf/ros2:nightly'
-image_name: 'jwp-ros2-latest'
-save_docker: false

@@ -1,3 +1,0 @@
-template: 'base.Dockerfile.template'
-base_image: 'ubuntu:18.04'
-image_name: 'jwp-build-latest'
