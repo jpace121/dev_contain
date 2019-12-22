@@ -8,6 +8,9 @@ for anything.
 
 License (unless otherwise noted): Apache-2.0
 
+Templates for building compliant containers are located in
+[this sister repository](https://github.com/jpace121/dev_contain_templates).
+
 ## Install Dependencies
 
 ### Podman and buildah
@@ -59,6 +62,8 @@ export PATH="~/.local/bin:$PATH"
 First time:
 ```bash
 sudo apt install python3-venv
+mkdir venv
+cd venv
 python3 -m venv .
 source bin/activate
 pip install -e .
