@@ -4,7 +4,7 @@ import sys
 import os
 
 package_name='dev_contain'
-version = '0.0.1'
+version = '0.1.0'
 
 setup_file_path = os.path.dirname(os.path.abspath(__file__))
 
