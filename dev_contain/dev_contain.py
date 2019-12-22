@@ -19,11 +19,12 @@ from dev_contain.run import run
 from dev_contain.list import list_
 from dev_contain.attach import attach
 from dev_contain.clean import clean
+from dev_contain.version import version
 import sys
 
 def main():
     parser = argparse.ArgumentParser(description='Build and run containers for development.')
-    parser.add_argument('command', choices=['run', 'build', 'list', 'attach', 'clean'], help='Subcommand to run.')
+    parser.add_argument('command', choices=['run', 'build', 'list', 'attach', 'clean', 'version'], help='Subcommand to run.')
     parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
     args = parser.parse_args()
 
@@ -37,6 +38,8 @@ def main():
         attach(args.args)
     if args.command == 'clean':
         clean(args.args)
+    if args.command == 'version':
+        version()
 
 if __name__ == '__main__':
     main()
