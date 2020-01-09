@@ -5,7 +5,7 @@ import os
 
 package_name='dev_contain'
 release = '0.0.2'
-version = '1.0.0'
+semver = '1.0.0'
 
 setup_file_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,13 +25,13 @@ def set_version_file():
     # Save git version and version variable to a file.
     with open(os.path.join(setup_file_path, package_name, 'version.yaml'), 'w+') as f:
         f.write('release: {}\n'.format(release))
-        f.write('version: {}\n'.format(version))
+        f.write('semver: {}\n'.format(semver))
         f.write('hash: {}\n'.format(git_version))
 
 set_version_file()
 
 setup(name='dev_contain',
-      version=version,
+      version=semver,
       description='CLI script to build and use containers for development leveraging podman.',
       author='James Pace',
       author_email='jpace121@gmail.com',
