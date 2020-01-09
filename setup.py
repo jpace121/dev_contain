@@ -27,7 +27,7 @@ def set_version_file():
         f.write('release: {}\n'.format(release))
         f.write('version: {}\n'.format(version))
         f.write('hash: {}\n'.format(git_version))
-         
+
 set_version_file()
 
 setup(name='dev_contain',
