@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 #
 # Copyright 2019 James Pace
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ def build(in_args):
     args = parser.parse_args(in_args)
 
     builder = common.get_builder()
-        
+
     # Grab values from config file.
     if not os.path.exists(args.config_file):
         print('Provided config file ({}) does not exist.'.format(args.config_file))
@@ -45,7 +45,7 @@ def build(in_args):
         if hasattr(err, 'problem_mark'):
             print('Error Position: {} {}'.format(err.problem_mark.line+1, err.problem_mark.column+1))
         return -1
-     
+
     # Set promised values if not set in file.
     if not config.get('template'):
         config['template'] = 'base.sh.template'
@@ -59,7 +59,7 @@ def build(in_args):
         config['save_docker'] = False
     if not config.get('image_name'):
         config['image_name'] = 'dev_contain'
-        
+
     # Find template directory.
     config['template_dir'] = args.template_dir
     if not config['template_dir']:
@@ -74,7 +74,7 @@ def build(in_args):
     # Find and render the base template.
     template = env.get_template(config['template'])
     res = template.render(config)
-    
+
     # Run the resulting script.
     if args.print:
         print(res)
@@ -84,11 +84,11 @@ def build(in_args):
         elif 'Dockerfile' in config['template']:
             cmd = ''
             if builder == 'docker':
-                cmd = 'docker build -t {image_name} -f - {template_dir}'.format(image_name=config['image_name'],
-                                                                                template_dir=config['template_dir'])
+                cmd = 'docker build -t {image_name} --no-cache -f - {template_dir}'.format(image_name=config['image_name'],
+                                                                                           template_dir=config['template_dir'])
             else:
-                cmd = 'buildah bud -t {image_name} --layers -f - {template_dir}'.format(image_name=config['image_name'],
-                                                                                        template_dir=config['template_dir'])
+                cmd = 'buildah bud -t {image_name} -f - {template_dir}'.format(image_name=config['image_name'],
+                                                                               template_dir=config['template_dir'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:
