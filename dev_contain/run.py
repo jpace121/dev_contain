@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 #
 # Copyright 2019 James Pace
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,18 +21,18 @@ import subprocess
 import dev_contain.common as common
 
 def run(in_args):
-    parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container using podman.')
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container.')
     parser.add_argument('--image', '-i', help='Name of image to launch.')
     parser.add_argument('--container', '-c', help='Name of the new container.')
     parser.add_argument('--volume', '-v', action='append', help='Volume on local machine to mount at same location in container.')
     parser.add_argument('--workdir', '-d', help='Directory to start in.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
-    parser.add_argument('--graphics' ,'-X', action='store_true', help='Forward graphics.')
+    parser.add_argument('--graphics', '-X', action='store_true', help='Forward graphics.')
     args = parser.parse_args(in_args)
 
     manager = common.get_manager()
 
-    username =  args.user
+    username = args.user
     if not args.user:
         username = os.environ['USER']
 
@@ -105,7 +105,7 @@ def set_up_graphics_forwards():
     dbus = ''
     # What kind of socket is it?
     dbus_address = os.environ.get('DBUS_SESSION_BUS_ADDRESS')
-    # If a real path, need to mount it. Other wise --net=host takes care of it.
+    # If a real path, need to mount it. Otherwise --net=host takes care of it.
     if 'unix:path' in dbus_address:
         dbus_path = dbus_address.split('=')[1]
         dbus = dbus + '--volume {path}:{path}'.format(path=dbus_path)
@@ -113,8 +113,7 @@ def set_up_graphics_forwards():
     dbus = dbus + ' --env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"'
 
     return xorg + ' ' + wayland + ' ' + dbus
-    
+
 
 if __name__ == '__main__':
     run(sys.argv[1:])
-    
