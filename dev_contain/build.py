@@ -59,6 +59,8 @@ def build(in_args):
         config['save_docker'] = False
     if not config.get('image_name'):
         config['image_name'] = 'dev_contain'
+    if not config.get('use_host_network'):
+        config['use_host_network'] = False
 
     # Find template directory.
     config['template_dir'] = args.template_dir
@@ -76,6 +78,9 @@ def build(in_args):
     res = template.render(config)
 
     # Run the resulting script.
+    network_text = ''
+    if config['use_host_network']:
+        network_text = '--network=host'
     if args.print:
         print(res)
     else:
@@ -84,11 +89,15 @@ def build(in_args):
         elif 'Dockerfile' in config['template']:
             cmd = ''
             if builder == 'docker':
-                cmd = 'docker build -t {image_name} --no-cache -f - {template_dir}'.format(image_name=config['image_name'],
-                                                                                           template_dir=config['template_dir'])
+                cmd = ('docker build {network_text} -t {image_name} '
+                       '--no-cache -f - {template_dir}').format(
+                           image_name=config['image_name'], network_text=network_text,
+                           template_dir=config['template_dir'])
             else:
-                cmd = 'buildah bud -t {image_name} -f - {template_dir}'.format(image_name=config['image_name'],
-                                                                               template_dir=config['template_dir'])
+                cmd = ('buildah bud {network_text} -t {image_name} '
+                       '-f - {template_dir}').format(
+                           image_name=config['image_name'], network_text=network_text,
+                           template_dir=config['template_dir'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:

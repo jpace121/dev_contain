@@ -44,7 +44,7 @@ def attach(in_args):
     is_exited = parsed_result == 'exited'
 
     if is_running:
-        podman_command = ('{manager} exec -i -t {container}',
+        podman_command = ('{manager} exec -i -t {container}'
                           ' bash -c \'{command}\'').format(manager=manager,
                                                            container=container,
                                                            command=command)
