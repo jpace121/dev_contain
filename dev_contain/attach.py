@@ -44,8 +44,10 @@ def attach(in_args):
     is_exited = parsed_result == 'exited'
 
     if is_running:
-        podman_command = '{manager} restart {container}'.format(manager=manager,
-                                                                container=container)
+        podman_command = ('{manager} exec -i -t {container}',
+                          ' bash -c \'{command}\'').format(manager=manager,
+                                                           container=container,
+                                                           command=command)
         print('Running: {}'.format(podman_command))
         subprocess.run(podman_command, shell=True)
     elif is_exited:
