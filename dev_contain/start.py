@@ -20,8 +20,8 @@ import sys
 import subprocess
 import dev_contain.common as common
 
-def run(in_args):
-    parser = argparse.ArgumentParser(prog=sys.argv[0]+' run', description='Run a provided container.')
+def start(in_args):
+    parser = argparse.ArgumentParser(prog=sys.argv[0]+' start', description='Start a provided container.')
     parser.add_argument('--image', '-i', help='Name of image to launch.')
     parser.add_argument('--container', '-c', help='Name of the new container.')
     parser.add_argument('--volume', '-v', action='append', help='Volume on local machine to mount at same location in container.')
@@ -116,4 +116,4 @@ def set_up_graphics_forwards():
 
 
 if __name__ == '__main__':
-    run(sys.argv[1:])
+    start(sys.argv[1:])

@@ -15,7 +15,7 @@
 # limitations under the License.
 import argparse
 from dev_contain.build import build
-from dev_contain.run import run
+from dev_contain.start import start
 from dev_contain.list import list_
 from dev_contain.attach import attach
 from dev_contain.clean import clean
@@ -23,14 +23,14 @@ from dev_contain.version import version
 
 def main():
     parser = argparse.ArgumentParser(description='Build and run containers for development.')
-    parser.add_argument('command', choices=['run', 'build', 'list', 'attach', 'clean', 'version'], help='Subcommand to run.')
+    parser.add_argument('command', choices=['start', 'build', 'list', 'attach', 'clean', 'version'], help='Subcommand to run.')
     parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
     args = parser.parse_args()
 
     if args.command == 'build':
         build(args.args)
-    if args.command == 'run':
-        run(args.args)
+    if args.command == 'start':
+        start(args.args)
     if args.command == 'list':
         list_(args.args)
     if args.command == 'attach':
