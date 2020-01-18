@@ -4,8 +4,8 @@ import sys
 import os
 
 package_name='dev_contain'
-release = '0.0.5'
-semver = '2.0.0'
+release = '0.0.6'
+semver = '3.0.0'
 
 setup_file_path = os.path.dirname(os.path.abspath(__file__))
 
