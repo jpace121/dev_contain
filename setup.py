@@ -17,7 +17,7 @@ def set_version_file():
     # Get git version if we can.
     git_version = 'Unknown'
     try:
-        check_result = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        check_result = subprocess.Popen(['git', 'describe', '--no-match', '--always', '--dirty'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         git_version = check_result.stdout.read().decode('ascii').strip()
     except:
         pass
