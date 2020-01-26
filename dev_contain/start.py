@@ -18,6 +18,7 @@ import argparse
 import os
 import sys
 import subprocess
+import pathlib
 import dev_contain.common as common
 
 def start(in_args):
@@ -68,7 +69,8 @@ def start(in_args):
 
     volume_text = ''
     for volume in volumes:
-        volume_text = volume_text + ' --volume {volume}:{volume}:Z'.format(volume=volume)
+        new_text = parse_volume(volume)
+        volume_text = volume_text + new_text
 
     command = ('{manager} run -d'
                ' --user {username}'
@@ -92,6 +94,16 @@ def start(in_args):
                        userns_text=userns_text)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
+
+def parse_volume(volume):
+    if not ':' in volume:
+        volume = str(pathlib.Path(volume).expanduser().resolve())
+        return ' --volume {volume}:{volume}:Z'.format(volume=volume)
+    else:
+        volume = volume.split(':')
+        volume[0] = str(pathlib.Path(volume[0]).expanduser().resolve())
+        volume[1] = str(pathlib.Path(volume[1]).expanduser().resolve())
+        return ' --volume {volume0}:{volume1}:Z'.format(volume0=volume[0], volume1=volume[1])
 
 def set_up_graphics_forwards():
     # XOrg
