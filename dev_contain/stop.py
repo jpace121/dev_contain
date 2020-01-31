@@ -32,18 +32,18 @@ def stop(in_args):
     manager = common.get_manager()
 
     # Is container running?
-    check_command = manager + ' inspect ' + args.container  +' -f "{{ .State.Running }}"'
+    check_command = manager + ' inspect ' + container  +' -f "{{ .State.Running }}"'
     check_result = subprocess.Popen(shlex.split(check_command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     is_running = check_result.stdout.read().decode('ascii').strip() == 'true'
     # If so stop it.
     if(is_running):
         stop_command = '{manager} stop {container}'.format(manager=manager,
-                                                           container=args.container)
+                                                           container=container)
         print('Stopping container: {}'.format(stop_command))
         subprocess.run(stop_command, shell=True)
     # rm container.
     remove_command = '{manager} rm {container}'.format(manager=manager,
-                                                       container=args.container)
+                                                       container=container)
     print('Removing container: {}'.format(remove_command))
     subprocess.run(remove_command, shell=True)
 
