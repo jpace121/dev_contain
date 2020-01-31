@@ -29,6 +29,7 @@ def start(in_args):
     parser.add_argument('--workdir', '-d', help='Directory to start in.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics', '-X', action='store_true', help='Forward graphics.')
+    parser.add_argument('--ssh', '-S', action='store_true', help='Forward ssh keys.')
     args = parser.parse_args(in_args)
 
     manager = common.get_manager()
@@ -62,10 +63,16 @@ def start(in_args):
     if manager == 'podman':
         userns_text = '--userns=keep-id'
 
-    # Include volume for ssh keys if it exists.
+    # Include volume for ssh keys.
     ssh_text = ''
-    if os.path.exists('/home/{}/.ssh'.format(username)):
-        ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username, username)
+    if args.ssh:
+        if os.path.exists('/home/{}/.ssh'.format(username)):
+            ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username,
+                                                                       username)
+        else:
+            print('Requested ssh key forwarding, but ~/.ssh does not exist.',
+                  file=sys.stderr)
+            sys.exit(1)
 
     volume_text = ''
     for volume in volumes:
@@ -98,12 +105,22 @@ def start(in_args):
 def parse_volume(volume):
     if not ':' in volume:
         volume = str(pathlib.Path(volume).expanduser().resolve())
-        return ' --volume {volume}:{volume}:Z'.format(volume=volume)
+        if os.path.exists(volume):
+            return ' --volume {volume}:{volume}:Z'.format(volume=volume)
+        else:
+            print('Requested volume ({}) not present on host. Exiting.'.format(volume),
+                  file=sys.stderr)
+            sys.exit(1)
     else:
         volume = volume.split(':')
         volume[0] = str(pathlib.Path(volume[0]).expanduser().resolve())
         volume[1] = str(pathlib.Path(volume[1]).expanduser().resolve())
-        return ' --volume {volume0}:{volume1}:Z'.format(volume0=volume[0], volume1=volume[1])
+        if os.path.exists(volume[0]):
+            return ' --volume {volume0}:{volume1}:Z'.format(volume0=volume[0], volume1=volume[1])
+        else:
+            print('Requested volume ({}) not present on host. Exiting.'.format(volume[0]),
+                  file=sys.stderr)
+            sys.exit(1)
 
 def set_up_graphics_forwards():
     # XOrg
