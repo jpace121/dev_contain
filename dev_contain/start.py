@@ -66,13 +66,13 @@ def start(in_args):
     # Include volume for ssh keys.
     ssh_text = ''
     if args.ssh:
-        if os.path.exists('/home/{}/.ssh'.format(username)):
-            ssh_text = '--volume /home/{}/.ssh:/home/{}/.ssh:Z'.format(username,
-                                                                       username)
+        if 'SSH_AUTH_SOCK' in os.environ.keys():
+            ssh_text = ('-v {ssh_auth_sock}:/.ssh_auth_sock '
+                        '-e SSH_AUTH_SOCK=/.ssh_auth_sock').format(
+                            ssh_auth_sock=os.environ['SSH_AUTH_SOCK'])
         else:
-            print('Requested ssh key forwarding, but ~/.ssh does not exist.',
-                  file=sys.stderr)
-            sys.exit(1)
+            print('Requested forwarding of ssh keys, but SSH_AUTH_SOCK does not exist.')
+            sys.exit(-1)
 
     volume_text = ''
     for volume in volumes:
