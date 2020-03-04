@@ -1,78 +1,24 @@
 # jpace121 Development Containers
 
-A series of scripts I built so I can develop, build, and test code in
-containers.
+A series of scripts I built so I can use containers as my primary development
+environment.
 
-Note that this is a HUGE experiment still, don't actually depend on these
-for anything.
-
-License (unless otherwise noted): Apache-2.0
+License: Apache-2.0
 
 Templates for building compliant containers are located in
 [this sister repository](https://github.com/jpace121/dev_contain_templates).
 
 ## Install Dependencies
 
-### Podman and buildah
+By default, `dev_contain` tries to call
+[buildah](https://github.com/containers/buildah) and
+[podman](https://github.com/containers/libpod) to build and run containers.
 
-Ubuntu 18.04:
-```bash
-sudo apt-get update 
-sudo apt-get install software-properties-common uidmap slirp4netns runc
-sudo add-apt-repository ppa:projectatomic/ppa
-sudo apt-get update 
-
-sudo apt-get install buildah
-sudo apt-get install podman
-
-echo -e "[registries.search]\nregistries = ['docker.io', 'quay.io']" | sudo tee /etc/containers/registries.conf
-```
-
-On Ubuntu 16.04 I've ran into problems using podman and buildah, but only for
-certain images (after I changed the storage settings to use overlayfs, with
-vfs I had lots of permission issues...)
-
-### Docker
-If desired, docker can be used instead.
-
-Ubuntu 18.04:
-```bash
-sudo apt install docker.io
-sudo groupadd docker
-```
-
-Instead of adding myself to the docker group, I've been adding myself
-temporarily with the following command, which will open a new shell.
-```bash
-sudo -i -g docker
-```
-Note if using the above method to join the Docker group, X forwarding
-does not work.
-
-For  `dev_contain` to use `Docker`, set the environment variables
+For  `dev_contain` to use docker instead, set the environment variables
 `DEV_CONTAIN_BUILDER` and `DEV_CONTAIN_MANAGER` to `docker`.
 
 ## Install Package
 ```bash
 pip3 install --user .
 export PATH="~/.local/bin:$PATH"
-```
-
-### Development
-First time:
-```bash
-sudo apt install python3-venv
-mkdir venv
-cd venv
-python3 -m venv .
-source bin/activate
-pip install -e .
-deactivate
-```
-
-After making changes:
-```bash
-source bin/activate
-... test ...
-deactivate
 ```
