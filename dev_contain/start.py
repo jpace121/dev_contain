@@ -124,12 +124,16 @@ def parse_volume(volume):
 
 def set_up_graphics_forwards():
     # XOrg
-    xorg = (' -e DISPLAY=$DISPLAY'
-            ' -v /tmp/.X11-unix:/tmp/.X11-unix:rw')
+    xorg = ''
+    if os.path.exists('/tmp/.X11-unix'):
+        xorg = (' -e DISPLAY=$DISPLAY'
+                ' -v /tmp/.X11-unix:/tmp/.X11-unix:rw')
     # Wayland
-    wayland = (' -e XDG_RUNTIME_DIR=/tmp'
-               ' -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY'
-               ' -v $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY')
+    wayland = ''
+    if os.environ.get('WAYLAND_DISPLAY'):
+        wayland = (' -e XDG_RUNTIME_DIR=/tmp'
+                   ' -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY'
+                   ' -v $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY')
     # (User) dbus socket.
     dbus = ''
     # What kind of socket is it?
