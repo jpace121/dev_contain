@@ -39,9 +39,9 @@ def attach(in_args):
 
     check_command = manager + ' inspect ' + container + ' -f "{{ .State.Status }}"'
     check_result = subprocess.Popen(shlex.split(check_command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    parsed_result = check_result.stdout.read().decode('ascii').strip()
+    parsed_result = check_result.stdout.read().decode('ascii').strip().lower()
     is_running = parsed_result == 'running'
-    is_exited = parsed_result == 'exited'
+    is_exited = parsed_result == 'exited' or parsed_result == 'configured'
 
     if is_running:
         podman_command = ('{manager} exec -i -t {container}'
