@@ -114,7 +114,8 @@ def parse_volume(volume):
     else:
         volume = volume.split(':')
         volume[0] = str(pathlib.Path(volume[0]).expanduser().resolve())
-        volume[1] = str(pathlib.Path(volume[1]).expanduser().resolve())
+         # Note the second path may not resolve on the host.
+        volume[1] = str(pathlib.Path(volume[1]).expanduser())
         if os.path.exists(volume[0]):
             return ' --volume {volume0}:{volume1}:Z'.format(volume0=volume[0], volume1=volume[1])
         else:
