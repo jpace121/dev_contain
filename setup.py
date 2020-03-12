@@ -1,4 +1,3 @@
-B
 from setuptools import setup
 import subprocess
 import sys
