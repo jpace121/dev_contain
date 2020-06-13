@@ -32,7 +32,7 @@ set_version_file()
 
 setup(name='dev_contain',
       version=semver,
-      description='CLI script to build and use containers for development leveraging podman.',
+      description='CLI script to build and use containers for development leveraging podman or docker.',
       author='James Pace',
       author_email='jpace121@gmail.com',
       url='dev_contain.local',

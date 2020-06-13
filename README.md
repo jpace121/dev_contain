@@ -22,3 +22,11 @@ For  `dev_contain` to use docker instead, set the environment variables
 pip3 install --user .
 export PATH="~/.local/bin:$PATH"
 ```
+
+## Build a .deb
+``` bash
+fakeroot dpkg-buildpackage -b
+```
+.deb appears in the **parent directory**.
+
+

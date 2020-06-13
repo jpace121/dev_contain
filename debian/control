@@ -1,0 +1,16 @@
+Source: dev-contain
+Section: unknown
+Priority: optional
+Maintainer: James Pace <jpace121@gmail.com>
+Build-Depends: debhelper (>= 10), python3, python3-setuptools
+Standards-Version: 4.0.0
+Homepage: https://github.com/jpace121/dev_contain
+X-Python3-Version: >= 3.6
+
+Package: dev-contain
+Architecture: all
+Section: optional
+Depends: python3, ${python3:Depends}, ${misc:Depends}
+Description: CLI script to build and use containers for development.
+ CLI script to build and use containers for development leveraging podman or
+ docker.
