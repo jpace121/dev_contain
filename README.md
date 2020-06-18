@@ -23,10 +23,14 @@ pip3 install --user .
 export PATH="~/.local/bin:$PATH"
 ```
 
-## Build a .deb
-``` bash
-fakeroot dpkg-buildpackage -b
+## Packaging
+Always fix issues and modify the version number in the setup.py file before
+merging to master.
+
+### Debian
+1. Merge master to packaging/debian
+2. Modify change log.
+3. Build:
 ```
-.deb appears in the **parent directory**.
-
-
+   gbp buildpackage -us -uc
+```
