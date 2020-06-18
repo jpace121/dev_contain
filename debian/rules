@@ -1,4 +1,6 @@
+#!/usr/bin/make -f
+
 export PYBUILD_NAME=dev_contain
 
 %:
-    dh $@ --with python3 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild
