@@ -22,3 +22,23 @@ For  `dev_contain` to use docker instead, set the environment variables
 pip3 install --user .
 export PATH="~/.local/bin:$PATH"
 ```
+
+## Packaging
+Always fix issues and modify the version number in the setup.py file before
+merging to master.
+
+### Debian
+Requires `git-buildpackage`.
+
+1. Merge master to packaging/debian
+2. Modify change log.
+```
+   gbp dch --since=<last release>
+```
+Hand edit in correct version number and author name and verify changes.
+Add and commit change log.
+3. Build:
+```
+   gbp buildpackage -us -uc
+```
+4. Built files will be put in `/tmp`.
