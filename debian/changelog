@@ -1,3 +1,9 @@
+dev-contain (5.0.3-2) unstable; urgency=medium
+
+  * Add packaging instructions.
+
+ -- James Pace <jpace121@gmail.com>  Thu, 18 Jun 2020 00:29:44 +0000
+
 dev-contain (5.0.3-1) unstable; urgency=medium
 
     * Initial release.
