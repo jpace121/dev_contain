@@ -42,3 +42,11 @@ Add and commit change log.
    gbp buildpackage -us -uc
 ```
 4. Built files will be put in `/tmp`.
+
+### Fedora
+Requires `rpmbuild`/`fedora-packager`.
+
+1. Merge master to packaging/fedora.
+2. Update version number in spec file in the rpm directory.
+3. Run `rpm/build.bash`.
+4. Grab rpm from `/tmp/rpm/RPMS`.
