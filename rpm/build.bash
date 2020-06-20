@@ -12,7 +12,7 @@ mkdir -p /tmp/rpm/SPECS
 mkdir -p /tmp/rpm/SRPMS
 
 # Copy to sources.
-cp dist/dev_contain-5.0.3.tar.gz /tmp/rpm/SOURCES/.
+cp dist/dev_contain-*.tar.gz /tmp/rpm/SOURCES/.
 # Copy spec file
 cp rpm/dev-contain.spec /tmp/rpm/SPECS/.
 

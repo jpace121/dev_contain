@@ -3,7 +3,7 @@ Version: 5.0.3
 Release: 1%{?dist}
 Summary: Development container wrapper around podman
 
-License: Apache-2.0
+License: ASL 2.0
 URL: https://github.com/jpace121/dev_contain
 Source0: dev_contain-%version.tar.gz
 
@@ -21,7 +21,7 @@ BuildRequires: python3-devel
 %description -n python3-dev-contain %_description
 
 %prep
-%setup -n dev_contain-5.0.3
+%setup -n dev_contain-%version
 
 %build
 %py3_build
