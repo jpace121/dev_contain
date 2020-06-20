@@ -5,7 +5,7 @@ Summary: Development container wrapper around podman
 
 License: Apache-2.0
 URL: https://github.com/jpace121/dev_contain
-Source0: dev_contain
+Source0: dev_contain-%version.tar.gz
 
 BuildArch: noarch
 
@@ -17,12 +17,11 @@ CLI script to build and use containers for development leveraging podman.}
 %package -n python3-dev-contain
 Summary: Facilitate development container use
 BuildRequires: python3-devel
-Requires: python3-jinja2 python3-pyyaml
 
 %description -n python3-dev-contain %_description
 
 %prep
-cp -rf ${RPM_SOURCE_DIR}/dev_contain/* ${RPM_BUILD_DIR}
+%setup -n dev_contain-5.0.3
 
 %build
 %py3_build
