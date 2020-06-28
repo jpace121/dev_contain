@@ -55,8 +55,6 @@ def build(in_args):
         config['user_id'] = os.getuid()
     if not config.get('base_image'):
         config['base_image'] = 'jwp_build_latest'
-    if not config.get('save_docker'):
-        config['save_docker'] = False
     if not config.get('image_name'):
         config['image_name'] = 'dev_contain'
     if not config.get('use_host_network'):
