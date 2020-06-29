@@ -4,8 +4,7 @@ import sys
 import os
 
 package_name='dev_contain'
-release = '1.0.2'
-semver = '5.0.3'
+semver = '6.0.0'
 
 setup_file_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,7 +23,6 @@ def set_version_file():
 
     # Save git version and version variable to a file.
     with open(os.path.join(setup_file_path, package_name, 'version.yaml'), 'w+') as f:
-        f.write('release: {}\n'.format(release))
         f.write('semver: {}\n'.format(semver))
         f.write('hash: {}\n'.format(git_version))
 

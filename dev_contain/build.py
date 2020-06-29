@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright 2019 James Pace
 #
@@ -55,8 +54,6 @@ def build(in_args):
         config['user_id'] = os.getuid()
     if not config.get('base_image'):
         config['base_image'] = 'jwp_build_latest'
-    if not config.get('save_docker'):
-        config['save_docker'] = False
     if not config.get('image_name'):
         config['image_name'] = 'dev_contain'
     if not config.get('use_host_network'):
@@ -84,9 +81,7 @@ def build(in_args):
     if args.print:
         print(res)
     else:
-        if '.bash' in config['template'] or '.sh' in config['template'] and builder=='buildah':
-            subprocess.run(res, shell=True)
-        elif 'Dockerfile' in config['template']:
+        if 'Dockerfile' in config['template']:
             cmd = ''
             if builder == 'docker':
                 cmd = ('docker build {network_text} -t {image_name} '
@@ -101,9 +96,7 @@ def build(in_args):
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
             process.communicate(res.encode())
         else:
-            if builder!='buildah':
-                print('builder is {}. Only buildah can build from .sh or .bash files.'.format(builder))
-            print("Not sure how to run template file. File name should contain '.sh', '.bash', or 'Dockerfile'.")
+            print("Not sure how to run template file. File name should contain 'Dockerfile'.")
             return -1
 
 if __name__ == '__main__':
