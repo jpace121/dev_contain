@@ -28,9 +28,35 @@ Always fix issues and modify the version number in the setup.py file before
 merging to master.
 
 ### Debian
+Install deps:
+```bash
+sudo apt install \
+    python3-pip \
+    python3-setuptools \
+    build-essential \
+    fakeroot \
+    devscripts
+    debhelper \
+    dh-python
+```
+
 1. Merge master to packaging/debian
 2. Modify change log.
+```
+   dch --newversion <version>-1
+```
+Hand edit changelog from the template.
+Add and commit change log.
 3. Build:
 ```
-   gbp buildpackage -us -uc
+  debian/build.bash
 ```
+4. Built files will be put in `/tmp/dev_contain_build`.
+
+### Fedora
+Requires `rpmbuild`/`fedora-packager`.
+
+1. Merge master to packaging/fedora.
+2. Update version number in spec file in the rpm directory.
+3. Run `rpm/build.bash`.
+4. Grab rpm from `/tmp/rpm/RPMS`.
