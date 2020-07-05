@@ -1,3 +1,9 @@
+dev-contain (6.0.0-1) unstable; urgency=medium
+
+  * Version 6.0.0.
+
+ -- James Pace <jpace121@gmail.com>  Sun, 05 Jul 2020 17:28:16 +0000
+
 dev-contain (5.0.3-2) unstable; urgency=medium
 
   * Add packaging instructions.
