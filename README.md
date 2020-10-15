@@ -35,7 +35,7 @@ sudo apt install \
     python3-setuptools \
     build-essential \
     fakeroot \
-    devscripts
+    devscripts \
     debhelper \
     dh-python
 ```
