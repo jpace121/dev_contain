@@ -1,3 +1,9 @@
+dev-contain (6.1.0-1) unstable; urgency=medium
+
+  * Version 6.1.0.
+
+ -- James Pace <jpace121@gmail.com>  Thu, 15 Oct 2020 00:12:45 +0000
+
 dev-contain (6.0.0-1) unstable; urgency=medium
 
   * Version 6.0.0.
