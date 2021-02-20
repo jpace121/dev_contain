@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import getpass
 import sys
 import argparse
 import subprocess
@@ -49,7 +50,7 @@ def build(in_args):
     if not config.get('template'):
         config['template'] = 'base.sh.template'
     if not config.get('username'):
-        config['username'] = os.getlogin()
+        config['username'] = getpass.getuser()
     if not config.get('user_id'):
         config['user_id'] = os.getuid()
     if not config.get('base_image'):

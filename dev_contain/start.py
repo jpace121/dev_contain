@@ -29,6 +29,7 @@ def start(in_args):
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics', '-X', action='store_true', help='Forward graphics.')
     parser.add_argument('--ssh', '-S', action='store_true', help='Forward ssh keys.')
+    parser.add_argument('--args', '-a', help='Extra args to provide to the runtime. i.e. --args="--gpu"')
     args = parser.parse_args(in_args)
 
     manager = common.get_manager()
@@ -56,6 +57,10 @@ def start(in_args):
     graphics_text = ''
     if args.graphics:
         graphics_text = set_up_graphics_forwards()
+
+    args_text = ''
+    if args.args:
+        args_text = args.args
 
     # podman needs userns set to keep-id for volumes to work.
     userns_text = ''
@@ -87,7 +92,7 @@ def start(in_args):
                ' --net=host'
                ' -e DEV_CONTAIN_CONTAINER_NAME={container}'
                ' {volume_text}'
-               ' {ssh_text} {graphics_text}'
+               ' {ssh_text} {graphics_text} {args_text}'
                ' {image}').format(
                        manager=manager,
                        username=username,
@@ -95,6 +100,7 @@ def start(in_args):
                        volume_text=volume_text,
                        ssh_text=ssh_text,
                        graphics_text=graphics_text,
+                       args_text=args_text,
                        container=container,
                        workdir=workdir,
                        userns_text=userns_text)
