@@ -1,5 +1,5 @@
 Name: python-dev-contain
-Version: 6.0.0
+Version: 6.2.0
 Release: 1%{?dist}
 Summary: Development container wrapper around podman
 
