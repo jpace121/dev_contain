@@ -54,7 +54,7 @@ Add and commit change log.
 4. Built files will be put in `/tmp/dev_contain_build`.
 
 ### Fedora
-Requires `rpmbuild`/`fedora-packager`.
+`sudo dnf install rpm-build pyhton3-devel`
 
 `dnf install rpm-build fedora-packager python3-devel`
 On CentOS8:
