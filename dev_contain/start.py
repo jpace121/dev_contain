@@ -28,7 +28,7 @@ def start(in_args):
     parser.add_argument('--workdir', '-d', help='Directory to start in.')
     parser.add_argument('--user', '-u', help='Username to login into container as.')
     parser.add_argument('--graphics', '-X', action='store_true', help='Forward graphics.')
-    parser.add_argument('--ssh', '-S', action='store_true', help='Forward ssh keys.')
+    parser.add_argument('--no-ssh', '-S', action='store_true', help='Do not forward ssh keys.')
     parser.add_argument('--args', '-a', help='Extra args to provide to the runtime. i.e. --args="--gpu"')
     args = parser.parse_args(in_args)
 
@@ -69,14 +69,13 @@ def start(in_args):
 
     # Include volume for ssh keys.
     ssh_text = ''
-    if args.ssh:
+    if not args.no_ssh:
         if 'SSH_AUTH_SOCK' in os.environ.keys():
             ssh_text = ('-v {ssh_auth_sock}:/.ssh_auth_sock '
                         '-e SSH_AUTH_SOCK=/.ssh_auth_sock').format(
                             ssh_auth_sock=os.environ['SSH_AUTH_SOCK'])
         else:
-            print('Requested forwarding of ssh keys, but SSH_AUTH_SOCK does not exist.')
-            sys.exit(-1)
+            print('SSH_AUTH_SOCK does not exist not adding ssh keys.')
 
     volume_text = ''
     for volume in volumes:
