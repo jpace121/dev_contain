@@ -56,6 +56,10 @@ Add and commit change log.
 ### Fedora
 Requires `rpmbuild`/`fedora-packager`.
 
+`dnf install rpm-build fedora-packager python3-devel`
+On CentOS8:
+`pip3 install --upgrade --user setuptools wheel`
+
 1. Merge master to packaging/fedora.
 2. Update version number in spec file in the rpm directory.
 3. Run `rpm/build.bash`.
