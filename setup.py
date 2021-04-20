@@ -4,7 +4,7 @@ import sys
 import os
 
 package_name='dev_contain'
-semver = '6.2.0'
+semver = '7.0.0'
 
 setup_file_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,7 +14,7 @@ if sys.version_info < (3,):
 
 def set_version_file():
     # Get git version if we can.
-    git_version = 'Unknown'
+    git_version = ''
     try:
         check_result = subprocess.Popen(['git', 'describe', '--no-match', '--always', '--dirty'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         git_version = check_result.stdout.read().decode('ascii').strip()
@@ -24,7 +24,8 @@ def set_version_file():
     # Save git version and version variable to a file.
     with open(os.path.join(setup_file_path, package_name, 'version.yaml'), 'w+') as f:
         f.write('semver: {}\n'.format(semver))
-        f.write('hash: {}\n'.format(git_version))
+        if git_version:
+            f.write('hash: {}\n'.format(git_version))
 
 set_version_file()
 
