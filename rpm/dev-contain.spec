@@ -1,5 +1,5 @@
 Name: python-dev-contain
-Version: 6.2.0
+Version: 7.0.0
 Release: 1%{?dist}
 Summary: Development container wrapper around podman
 
@@ -17,6 +17,7 @@ CLI script to build and use containers for development leveraging podman.}
 %package -n python3-dev-contain
 Summary: Facilitate development container use
 BuildRequires: python3-devel
+Requires: (podman or docker-ce-cli or moby-engine)
 
 %description -n python3-dev-contain %_description
 
