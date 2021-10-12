@@ -1,0 +1,62 @@
+---
+- name: Setup build environment.
+  hosts: localhost
+  tags: setup
+  become: true
+  tasks:
+  - name: Update cache
+    ansible.builtin.apt:
+      update_cache: true
+  - name: Install build dependencies.
+    ansible.builtin.apt:
+       package:
+        - python3-pip
+        - python3-setuptools
+        - build-essential
+        - fakeroot
+        - devscripts
+        - debhelper
+        - dh-python
+       state: latest
+
+- name: Build package.
+  hosts: localhost
+  tags: build
+  tasks:
+  - name: Make out of tree build directory.
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: build
+      prefix: dev_contain
+    register: temp_file_loc
+  - name: Copy build files to location.
+    ansible.builtin.command:
+      cmd: "cp -r {{ playbook_dir }} {{ temp_file_loc.path }}/. "
+  - name: Call debuild.
+    ansible.builtin.command:
+       chdir: "{{temp_file_loc.path }}/{{ playbook_dir.split('/')[-1] }}"
+       cmd: debuild -us -uc -b
+  - name: Copy deb file back to the main directory.
+    ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: .
+    with_fileglob: "{{ temp_file_loc.path  }}/*.deb"
+
+- name: Upload to packaging server.
+  hosts: packaging
+  tags: deploy
+  tasks:
+    - name: Copy package to packaging server.
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /tmp/
+      with_fileglob: dev-contain*.deb
+      register: copied_files
+    - name: Fail if we didn't copy exactly one file.
+      ansible.builtin.fail:
+        msg: "Didn't find exactly one deb file."
+      when: copied_files.results | length != 1
+    - name: Add to reprepro.
+      ansible.builtin.command:
+       cmd: "reprepro -b ~/public/apt includedeb bionic {{ item['dest'] }}"
+      with_items: "{{ copied_files['results'] }}"
