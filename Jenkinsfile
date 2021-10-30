@@ -1,4 +1,3 @@
-def CONTAINER_ID = 'id of container'
 pipeline {
     agent any
     environment {
@@ -7,30 +6,24 @@ pipeline {
     stages {
         stage('Start Container') {
             steps {
-                script {
-                    CONTAINER_ID = sh(
-                        script: "podman run -d --rm -v $PWD:/build $BASE_CONTAINER tail -f /dev/null",
-                        returnStatus: true
-                        returnStdout: true
-                    )
-                }
-                sh 'echo "Run this.... ${CONTAINER_ID}"'
+                sh 'podman run -d --rm -v $PWD:/build $BASE_CONTAINER tail -f /dev/null > container-id.txt'
             }
         }
         stage('Setup') {
             steps {
-                sh 'podman exec ${CONTAINER_ID} ansible-playbook --tags setup -i /build/inventory.yaml /build/build.yaml'
+                sh 'podman exec `cat container-id.txt` ansible-playbook --tags setup -i /build/inventory.yaml /build/build.yaml'
             }
         }
         stage('Build') {
             steps {
-                sh 'podman exec ${CONTAINER_ID} ansible-playbook --tags build -i /build/inventory.yaml /build/build.yaml'
+                sh 'podman exec `cat container-id.txt` ansible-playbook --tags build -i /build/inventory.yaml /build/build.yaml'
             }
         }
     }
     post {
         always {
-            sh 'podman stop ${CONTAINER_ID}'
+            sh 'podman stop `cat container-id.txt`'
+            sh 'rm container-id.txt'
         }
     }
 }
