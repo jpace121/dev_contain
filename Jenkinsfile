@@ -11,12 +11,12 @@ pipeline {
         }
         stage('Setup') {
             steps {
-                sh 'podman exec `cat container-id.txt` ansible-playbook --tags setup -i /build/inventory.yaml /build/build.yaml'
+                sh 'podman exec `cat container-id.txt` ansible-playbook -vvv --tags setup -i /build/inventory.yaml /build/build.yaml'
             }
         }
         stage('Build') {
             steps {
-                sh 'podman exec `cat container-id.txt` ansible-playbook --tags build -i /build/inventory.yaml /build/build.yaml'
+                sh 'podman exec `cat container-id.txt` ansible-playbook -vvv --tags build -i /build/inventory.yaml /build/build.yaml'
             }
         }
     }
