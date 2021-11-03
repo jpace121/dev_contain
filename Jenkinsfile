@@ -19,6 +19,14 @@ pipeline {
                 sh 'podman exec `cat container-id.txt` ansible-playbook -vvv --tags build -i /build/inventory.yaml /build/build.yaml'
             }
         }
+        stage('Deploy') {
+            when {
+               branch 'packaging/debian'
+            }
+            steps {
+                sh 'ansible-playbook -vvv --tags deploy -i ./inventory.yaml ./build.yaml'
+            }
+        }
     }
     post {
         always {
