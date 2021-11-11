@@ -1,0 +1,70 @@
+---
+- name: Setup build environment.
+  hosts: localhost
+  tags: setup
+  become: true
+  tasks:
+  - name: Install build dependencies.
+    ansible.builtin.dnf:
+       name:
+        - python3-devel
+        - rpm-build
+        - fedora-packager
+       state: latest
+  - name: Update setuptools (for Centos)
+    ansible.builtin.command:
+      cmd: 'pip3 install --upgrade --user setuptools wheel'
+
+- name: Build package.
+  hosts: localhost
+  tags: build
+  tasks:
+  - name: Build tar file.
+    ansible.builtin.command:
+      cmd: "python3 setup.py sdist"
+  - name: Make temp directory for build boot.
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: build
+      prefix: dev_contain
+    register: temp_file_loc
+  - name: Make build root.
+    ansible.builtin.file:
+      state: directory
+      path: "{{ temp_file_loc.path }}/{{ item }}"
+    loop:
+      - BUILD
+      - RPMS
+      - SOURCES
+      - SPECS
+      - SRPMS
+  - name: Copy to sources.
+    ansible.builtin.command:
+      cmd: "cp {{ item }} {{ temp_file_loc.path }}/SOURCES/."
+    with_fileglob: dist/dev_contain-*.tar.gz
+  - name: Copy the spec file.
+    ansible.builtin.command:
+      cmd: "cp rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
+  - name: Build.
+    ansible.builtin.command:
+      cmd: "rpmbuild --define '_topdir {{ temp_file_loc.path }}' -ba {{ temp_file_loc }}/SPECS/dev-contain.spec"
+
+- name: Upload to packaging server.
+  hosts: packaging
+  tags: deploy
+  vars:
+    - repo_path: ~/public/rpm/fc35/
+  tasks:
+    - name: Copy package to packaging server.
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ repo_path }}"
+      with_fileglob: "{{ temp_file_loc.path }}/RPMS/*.rpm"
+      register: copied_files
+    - name: Fail if we didn't copy exactly one file.
+      ansible.builtin.fail:
+        msg: "Didn't find exactly one rpm."
+      when: copied_files.results | length != 1
+    - name: Run createrepo with podman.
+      ansible.builtin.command:
+       cmd: "podman run --rm -v {{ repo_path }}:/repo createrepo"
