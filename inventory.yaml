@@ -1,5 +1,5 @@
 all:
   hosts:
     packaging:
-      ansible_host: packages.internal.jpace121.net
+      ansible_host: packages.jpace121.net
       ansible_user: packaging

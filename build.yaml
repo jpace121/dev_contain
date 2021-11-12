@@ -13,7 +13,7 @@
        state: latest
   - name: Update setuptools (for Centos)
     ansible.builtin.command:
-      cmd: 'pip3 install --upgrade --user setuptools wheel'
+      cmd: 'pip3 install --upgrade setuptools wheel'
 
 - name: Build package.
   hosts: localhost
@@ -22,7 +22,7 @@
   - name: Build tar file.
     ansible.builtin.command:
       cmd: "python3 setup.py sdist"
-  - name: Make temp directory for build boot.
+  - name: Make temp directory for build root.
     ansible.builtin.tempfile:
       state: directory
       suffix: build
@@ -40,26 +40,32 @@
       - SRPMS
   - name: Copy to sources.
     ansible.builtin.command:
-      cmd: "cp {{ item }} {{ temp_file_loc.path }}/SOURCES/."
+      cmd: "mv {{ item }} {{ temp_file_loc.path }}/SOURCES/"
     with_fileglob: dist/dev_contain-*.tar.gz
   - name: Copy the spec file.
     ansible.builtin.command:
       cmd: "cp rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
   - name: Build.
     ansible.builtin.command:
-      cmd: "rpmbuild --define '_topdir {{ temp_file_loc.path }}' -ba {{ temp_file_loc }}/SPECS/dev-contain.spec"
+      cmd: "rpmbuild --define '_topdir {{ temp_file_loc.path }}' -ba {{ temp_file_loc.path }}/SPECS/dev-contain.spec"
+  - name: Copy rpm to current folder.
+    ansible.builtin.command:
+      cmd: "cp -r {{ temp_file_loc.path }}/RPMS/noarch/ {{ playbook_dir }}"
+  - name: Cleanup
+    ansible.builtin.command:
+      cmd: "rm -r dist/"
 
 - name: Upload to packaging server.
   hosts: packaging
   tags: deploy
   vars:
-    - repo_path: ~/public/rpm/fc35/
+    - repo_path: ~/public/rpm/el8/
   tasks:
     - name: Copy package to packaging server.
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "{{ repo_path }}"
-      with_fileglob: "{{ temp_file_loc.path }}/RPMS/*.rpm"
+      with_fileglob: "{{ playbook_dir }}/noarch/*.rpm"
       register: copied_files
     - name: Fail if we didn't copy exactly one file.
       ansible.builtin.fail:
