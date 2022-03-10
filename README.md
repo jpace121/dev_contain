@@ -17,6 +17,9 @@ By default, `dev_contain` tries to call
 For  `dev_contain` to use docker instead, set the environment variables
 `DEV_CONTAIN_BUILDER` and `DEV_CONTAIN_MANAGER` to `docker`.
 
+To use `podman build` to build containers, set `DEV_CONTAINER_BUILDER` to
+`podman`.
+
 ## Install Package
 ```bash
 pip3 install --user .
