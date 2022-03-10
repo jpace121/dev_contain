@@ -89,9 +89,14 @@ def build(in_args):
                        '--no-cache -f - {template_dir}').format(
                            image_name=config['image_name'], network_text=network_text,
                            template_dir=config['template_dir'])
-            else:
+            elif builder == 'buildah':
                 cmd = ('buildah bud {network_text} -t {image_name} '
                        '-f - {template_dir}').format(
+                           image_name=config['image_name'], network_text=network_text,
+                           template_dir=config['template_dir'])
+            else:
+                cmd = ('podman build {network_text} -t {image_name} '
+                       '--no-cache -f - {template_dir}').format(
                            image_name=config['image_name'], network_text=network_text,
                            template_dir=config['template_dir'])
             process = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE)
