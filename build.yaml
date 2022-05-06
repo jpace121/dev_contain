@@ -1,7 +1,25 @@
 ---
-- name: Setup build environment.
+- name: Setup container for building.
   hosts: localhost
-  tags: setup
+  tasks:
+    - name: Create a container
+      containers.podman.podman_container:
+        name: dev-contain-debian-builder
+        image: docker.io/library/debian:bullseye
+        command: 'sleep infinity'
+        state: started
+    - name: Add the container to inventory.
+      ansible.builtin.add_host:
+        name: dev-contain-debian-builder
+        ansible_connection: containers.podman.podman
+        ansible_user: root
+        changed_when: false
+    - name: Set the container up for normal ansible stuff.
+      delegate_to: dev-contain-debian-builder
+      raw: bash -c "apt update && apt install -y python"
+
+- name: Setup build environment.
+  hosts: dev-contain-debian-builder
   become: true
   tasks:
   - name: Update cache
@@ -20,8 +38,7 @@
        state: latest
 
 - name: Build package.
-  hosts: localhost
-  tags: build
+  hosts: dev-contain-debian-builder
   tasks:
   - name: Make out of tree build directory.
     ansible.builtin.tempfile:
@@ -60,3 +77,12 @@
       ansible.builtin.command:
        cmd: "reprepro -b ~/public/apt includedeb bionic {{ item['dest'] }}"
       with_items: "{{ copied_files['results'] }}"
+
+- name: Cleanup
+  hosts: localhost
+  tags: cleanup
+  tasks:
+    - name: Stop the container.
+      containers.podman.podman_container:
+        name: dev-contain-debian-builder
+        state: absent
