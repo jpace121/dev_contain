@@ -18,7 +18,7 @@ pipeline {
         {
            steps
            {
-             sh 'ansible-playbook --skip-tags cleanup,deploy -i inventory.yaml build.yaml'
+             sh 'ansible-playbook -vvvv --skip-tags cleanup,deploy -i inventory.yaml build.yaml'
            }
         }
         stage('Deploy')
@@ -32,7 +32,7 @@ pipeline {
             }
             steps
             {
-               sh 'ansible-playbook --tags deploy build.yaml'
+               sh 'ansible-playbook --tags deploy -i inventory.yaml build.yaml'
             }
         }
     }
@@ -40,7 +40,7 @@ pipeline {
     {
         always
         {
-            sh 'ansible-playbook --tags cleanup build.yaml'
+            sh 'ansible-playbook --tags cleanup -i inventory.yaml build.yaml'
         }
     }
 }

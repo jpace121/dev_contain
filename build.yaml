@@ -6,6 +6,7 @@
       containers.podman.podman_container:
         name: dev-contain-debian-builder
         image: docker.io/library/debian:bullseye
+        volume: "{{ playbook_dir }}:/mnt/dev_contain:Z"
         command: 'sleep infinity'
         state: started
     - name: Add the container to inventory.
@@ -13,10 +14,11 @@
         name: dev-contain-debian-builder
         ansible_connection: containers.podman.podman
         ansible_user: root
+        ansible_python_interpreter: /usr/bin/python3
         changed_when: false
     - name: Set the container up for normal ansible stuff.
       delegate_to: dev-contain-debian-builder
-      raw: bash -c "apt update && apt install -y python"
+      raw: bash -c "apt update && apt install -y python3"
 
 - name: Setup build environment.
   hosts: dev-contain-debian-builder
@@ -47,17 +49,15 @@
       prefix: dev_contain
     register: temp_file_loc
   - name: Copy build files to location.
-    ansible.builtin.command:
-      cmd: "cp -r {{ playbook_dir }} {{ temp_file_loc.path }}/. "
+    ansible.builtin.shell:
+      cmd: "cp -r /mnt/dev_contain {{ temp_file_loc.path }}/. "
   - name: Call debuild.
-    ansible.builtin.command:
-       chdir: "{{temp_file_loc.path }}/{{ playbook_dir.split('/')[-1] }}"
+    ansible.builtin.shell:
+       chdir: "{{temp_file_loc.path }}/dev_contain"
        cmd: debuild -us -uc -b
   - name: Copy deb file back to the main directory.
-    ansible.builtin.copy:
-      src: "{{ item }}"
-      dest: .
-    with_fileglob: "{{ temp_file_loc.path  }}/*.deb"
+    ansible.builtin.shell:
+      cmd: "cp -r  {{ temp_file_loc.path }}/*.deb /mnt/dev_contain/."
 
 - name: Upload to packaging server.
   hosts: packaging
@@ -74,7 +74,7 @@
         msg: "Didn't find exactly one deb file."
       when: copied_files.results | length != 1
     - name: Add to reprepro.
-      ansible.builtin.command:
+      ansible.builtin.shell:
        cmd: "reprepro -b ~/public/apt includedeb bionic {{ item['dest'] }}"
       with_items: "{{ copied_files['results'] }}"
 
