@@ -11,6 +11,7 @@ pipeline {
         {
           steps
           {
+            cleanWs()
             checkout scm
           }
         }
