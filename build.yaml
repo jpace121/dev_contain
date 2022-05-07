@@ -7,6 +7,7 @@
         name: dev-contain-el-builder
         image: quay.io/centos/centos:stream9
         volume: "{{ playbook_dir }}:/mnt/dev_contain:Z"
+        network: "host"
         command: 'sleep infinity'
         state: started
     - name: Add the container to inventory.
@@ -21,6 +22,10 @@
   hosts: dev-contain-el-builder
   become: true
   tasks:
+  - name: Update system.
+    ansible.builtin.dnf:
+       name: "*"
+       state: latest
   - name: Install build dependencies.
     ansible.builtin.dnf:
        name:
