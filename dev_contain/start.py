@@ -150,7 +150,10 @@ def set_up_graphics_forwards():
     # Regardless need to know where to look.
     dbus = dbus + ' --env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS"'
 
-    return xorg + ' ' + wayland + ' ' + dbus
+    # Privileged is required so we don't get dbus errors for some reason now.
+    privileged = '--privileged'
+
+    return xorg + ' ' + wayland + ' ' + dbus + ' ' + privileged
 
 
 if __name__ == '__main__':
