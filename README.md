@@ -17,6 +17,9 @@ By default, `dev_contain` tries to call
 For  `dev_contain` to use docker instead, set the environment variables
 `DEV_CONTAIN_BUILDER` and `DEV_CONTAIN_MANAGER` to `docker`.
 
+To use `podman build` to build containers, set `DEV_CONTAINER_BUILDER` to
+`podman`.
+
 ## Install Package
 ```bash
 pip3 install --user .
@@ -28,31 +31,13 @@ Always fix issues and modify the version number in the setup.py file before
 merging to master.
 
 ### Debian
-Install deps:
-```bash
-sudo apt install \
-    python3-pip \
-    python3-setuptools \
-    build-essential \
-    fakeroot \
-    devscripts \
-    debhelper \
-    dh-python
-```
-
-1. Merge master to packaging/debian
-2. Modify change log.
-```
-   dch --newversion <version>-1
-```
-Hand edit changelog from the template.
-Add and commit change log.
-3. Build:
-```
-  debian/build.bash
-```
-4. Built files will be put in `/tmp/dev_contain_build`.
-
+1. Merge master to packaging.
+2. Modify change log by copying and pasting the last entry.
+   Add and commit the change log.
+3. Install ansible:
+   `sudo apt install ansible`
+3. Build and release: `ansible-playbook ./build.yaml -i inventory.yaml`
+   or just build: `ansible-playbook ./build.yaml -i inventory.yaml --skip-tags "deploy"`
 ### Fedora
 Requires `rpmbuild`/`fedora-packager`.
 

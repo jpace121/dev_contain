@@ -21,13 +21,14 @@ import dev_contain.common as common
 
 def stop(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' stop', description='Stop and remove a running container.')
-    parser.add_argument('container', help='Name of the container to stop.', nargs='?')
+    parser.add_argument('container', help='Name of the container(s) to stop.', nargs='+')
     args = parser.parse_args(in_args)
 
-    container = 'dev'
-    if args.container:
-        container = args.container
+    for container in args.container:
+        remove_container(container)
 
+
+def remove_container(container):
     manager = common.get_manager()
 
     # Is container running?

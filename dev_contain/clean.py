@@ -29,6 +29,8 @@ def clean(in_args):
     if builder == 'buildah':
         run_and_log('Removing buildah containers.', 'buildah rm --all')
         run_and_log('Pruning buildah images.', 'buildah rmi --prune')
+    if builder == 'podman':
+        run_and_log('Removing podman images.', 'podman image prune')
     if builder == 'docker':
         run_and_log('Pruning dangling images.', 'docker image prune')
 
