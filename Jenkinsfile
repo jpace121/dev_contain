@@ -1,37 +1,46 @@
 pipeline {
     agent any
-    environment {
-        BASE_CONTAINER = "registry.jpace121.net/ci/debian:latest"
+
+    options
+    {
+        skipDefaultCheckout(true)
     }
-    stages {
-        stage('Start Container') {
-            steps {
-                sh 'podman run -d --rm -v $PWD:/build $BASE_CONTAINER tail -f /dev/null > container-id.txt'
-            }
+    stages
+    {
+        stage('Checkout')
+        {
+          steps
+          {
+            checkout scm
+          }
         }
-        stage('Setup') {
-            steps {
-                sh 'podman exec `cat container-id.txt` ansible-playbook -vvv --tags setup -i /build/inventory.yaml /build/build.yaml'
-            }
+        stage('Run')
+        {
+           steps
+           {
+             sh 'ansible-playbook -vvvv --skip-tags cleanup,deploy -i inventory.yaml build.yaml'
+           }
         }
-        stage('Build') {
-            steps {
-                sh 'podman exec `cat container-id.txt` ansible-playbook -vvv --tags build -i /build/inventory.yaml /build/build.yaml'
+        stage('Deploy')
+        {
+            when
+            {
+               expression
+               {
+                  currentBuild.result == null || currentBuild.result == 'SUCCESS'
+               }
             }
-        }
-        stage('Deploy') {
-            when {
-               branch 'packaging/debian'
-            }
-            steps {
-                sh 'ansible-playbook -vvv --tags deploy -i ./inventory.yaml ./build.yaml'
+            steps
+            {
+               sh 'ansible-playbook --tags deploy -i inventory.yaml build.yaml'
             }
         }
     }
-    post {
-        always {
-            sh 'podman stop `cat container-id.txt`'
-            sh 'rm container-id.txt'
+    post
+    {
+        always
+        {
+            sh 'ansible-playbook --tags cleanup -i inventory.yaml build.yaml'
         }
     }
 }

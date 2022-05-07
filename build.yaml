@@ -1,7 +1,24 @@
 ---
-- name: Setup build environment.
+- name: Setup container for building.
   hosts: localhost
-  tags: setup
+  tasks:
+    - name: Create a container
+      containers.podman.podman_container:
+        name: dev-contain-el-builder
+        image: quay.io/centos/centos:stream9
+        volume: "{{ playbook_dir }}:/mnt/dev_contain:Z"
+        command: 'sleep infinity'
+        state: started
+    - name: Add the container to inventory.
+      ansible.builtin.add_host:
+        name: dev-contain-el-builder
+        ansible_connection: containers.podman.podman
+        ansible_user: root
+        ansible_python_interpreter: /usr/bin/python3
+        changed_when: false
+
+- name: Setup build environment.
+  hosts: dev-contain-el-builder
   become: true
   tasks:
   - name: Install build dependencies.
@@ -9,19 +26,18 @@
        name:
         - python3-devel
         - rpm-build
-        - fedora-packager
        state: latest
-  - name: Update setuptools (for Centos)
+  - name: Update setuptools
     ansible.builtin.command:
       cmd: 'pip3 install --upgrade setuptools wheel'
 
 - name: Build package.
-  hosts: localhost
-  tags: build
+  hosts: dev-contain-el-builder
   tasks:
   - name: Build tar file.
     ansible.builtin.command:
       cmd: "python3 setup.py sdist"
+      chdir: "/mnt/dev_contain"
   - name: Make temp directory for build root.
     ansible.builtin.tempfile:
       state: directory
@@ -39,27 +55,23 @@
       - SPECS
       - SRPMS
   - name: Copy to sources.
-    ansible.builtin.command:
-      cmd: "mv {{ item }} {{ temp_file_loc.path }}/SOURCES/"
-    with_fileglob: dist/dev_contain-*.tar.gz
+    ansible.builtin.shell:
+      cmd: "mv /mnt/dev_contain/dist/dev_contain-*.tar.gz {{ temp_file_loc.path }}/SOURCES/"
   - name: Copy the spec file.
-    ansible.builtin.command:
-      cmd: "cp rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
+    ansible.builtin.shell:
+      cmd: "cp /mnt/dev_contain/rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
   - name: Build.
     ansible.builtin.command:
       cmd: "rpmbuild --define '_topdir {{ temp_file_loc.path }}' -ba {{ temp_file_loc.path }}/SPECS/dev-contain.spec"
   - name: Copy rpm to current folder.
-    ansible.builtin.command:
-      cmd: "cp -r {{ temp_file_loc.path }}/RPMS/noarch/ {{ playbook_dir }}"
-  - name: Cleanup
-    ansible.builtin.command:
-      cmd: "rm -r dist/"
+    ansible.builtin.shell:
+      cmd: "cp -r {{ temp_file_loc.path }}/RPMS/noarch/ /mnt/dev_contain/."
 
 - name: Upload to packaging server.
   hosts: packaging
   tags: deploy
   vars:
-    - repo_path: ~/public/rpm/el8/
+    - repo_path: ~/public/rpm/el9/
   tasks:
     - name: Copy package to packaging server.
       ansible.builtin.copy:
