@@ -6,7 +6,7 @@
       containers.podman.podman_container:
         name: dev-contain-el-builder
         image: quay.io/centos/centos:stream9
-        volume: "{{ playbook_dir }}:/mnt/dev_contain:Z"
+        volume: "{{ playbook_dir }}:/dev_contain:Z"
         network: "host"
         command: 'sleep infinity'
         state: started
@@ -33,16 +33,17 @@
         - rpm-build
        state: latest
   - name: Update setuptools
-    ansible.builtin.command:
+    ansible.builtin.shell:
       cmd: 'pip3 install --upgrade setuptools wheel'
 
 - name: Build package.
   hosts: dev-contain-el-builder
   tasks:
   - name: Build tar file.
-    ansible.builtin.command:
-      cmd: "python3 setup.py sdist"
-      chdir: "/mnt/dev_contain"
+    ansible.builtin.shell:
+      cmd: |
+        cd /dev_contain
+        python3 setup.py sdist
   - name: Make temp directory for build root.
     ansible.builtin.tempfile:
       state: directory
@@ -61,16 +62,16 @@
       - SRPMS
   - name: Copy to sources.
     ansible.builtin.shell:
-      cmd: "mv /mnt/dev_contain/dist/dev_contain-*.tar.gz {{ temp_file_loc.path }}/SOURCES/"
+      cmd: "mv /dev_contain/dist/dev_contain-*.tar.gz {{ temp_file_loc.path }}/SOURCES/"
   - name: Copy the spec file.
     ansible.builtin.shell:
-      cmd: "cp /mnt/dev_contain/rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
+      cmd: "cp /dev_contain/rpm/dev-contain.spec {{ temp_file_loc.path }}/SPECS/"
   - name: Build.
-    ansible.builtin.command:
+    ansible.builtin.shell:
       cmd: "rpmbuild --define '_topdir {{ temp_file_loc.path }}' -ba {{ temp_file_loc.path }}/SPECS/dev-contain.spec"
   - name: Copy rpm to current folder.
     ansible.builtin.shell:
-      cmd: "cp -r {{ temp_file_loc.path }}/RPMS/noarch/ /mnt/dev_contain/."
+      cmd: "cp -r {{ temp_file_loc.path }}/RPMS/noarch/ /dev_contain/."
 
 - name: Upload to packaging server.
   hosts: packaging
@@ -89,5 +90,5 @@
         msg: "Didn't find exactly one rpm."
       when: copied_files.results | length != 1
     - name: Run createrepo with podman.
-      ansible.builtin.command:
+      ansible.builtin.shell:
        cmd: "podman run --rm -v {{ repo_path }}:/repo createrepo"
