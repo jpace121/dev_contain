@@ -58,6 +58,12 @@
   - name: Copy deb file back to the main directory.
     ansible.builtin.shell:
       cmd: "cp -r  {{ temp_file_loc.path }}/*.deb /mnt/dev_contain/."
+  - name: Copy changes file back to the main directory.
+    ansible.builtin.shell:
+      cmd: "cp -r  {{ temp_file_loc.path }}/*.changes /mnt/dev_contain/."
+  - name: Copy buildinfo file back to the main directory.
+    ansible.builtin.shell:
+      cmd: "cp -r  {{ temp_file_loc.path }}/*.buildinfo /mnt/dev_contain/."
 
 - name: Upload to packaging server.
   hosts: packaging
@@ -66,17 +72,36 @@
     - name: Copy package to packaging server.
       ansible.builtin.copy:
         src: "{{ item }}"
-        dest: /tmp/
+        dest: ~/public/apt/mini-dinstall/incoming/
       with_fileglob: dev-contain*.deb
       register: copied_files
     - name: Fail if we didn't copy exactly one file.
       ansible.builtin.fail:
         msg: "Didn't find exactly one deb file."
       when: copied_files.results | length != 1
-    - name: Add to reprepro.
+    - name: Ditto the changes file.
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: ~/public/apt/mini-dinstall/incoming/
+      with_fileglob: dev-contain*.changes
+      register: copied_changes
+    - name: Fail if we didn't copy exactly one file.
+      ansible.builtin.fail:
+        msg: "Didn't find exactly one changes file."
+      when: copied_changes.results | length != 1
+    - name: Ditto the buildinfo file.
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: ~/public/apt/mini-dinstall/incoming/
+      with_fileglob: dev-contain*.buildinfo
+      register: copied_buildinfo
+    - name: Fail if we didn't copy exactly one file.
+      ansible.builtin.fail:
+        msg: "Didn't find exactly one buildinfo file."
+      when: copied_buildinfo.results | length != 1
+    - name: Run mini-dinstall.
       ansible.builtin.shell:
-       cmd: "reprepro -b ~/public/apt includedeb bionic {{ item['dest'] }}"
-      with_items: "{{ copied_files['results'] }}"
+       cmd: "mini-dinstall --batch"
 
 - name: Cleanup
   hosts: localhost
