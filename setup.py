@@ -38,7 +38,7 @@ setup(name='dev_contain',
       license='Apache 2.0',
       packages=[package_name],
       setup_requires=['wheel'],
-      install_requires=['jinja2', 'pyyaml'],
+      install_requires=['jinja2', 'pyyaml', 'json5'],
       package_data={
         '': ['version.yaml'],
       },
