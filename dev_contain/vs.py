@@ -29,7 +29,8 @@ def vs(in_args):
     args = parser.parse_args(in_args)
 
     if not is_dev_container_installed():
-        print('Could not find devcontainer. Please install it.')
+        print('Could not find devcontainer. Please install it with:')
+        print('\t sudo npm install -g @devcontainers/cli')
         return
 
     workspace_dir = find_workspace_folder()
