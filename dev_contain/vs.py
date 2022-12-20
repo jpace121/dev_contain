@@ -26,7 +26,7 @@ import dev_contain.common as common
 
 def vs(in_args):
     parser = argparse.ArgumentParser(prog=sys.argv[0]+' vs', description='Support for interacting with devcontainer containers.')
-    parser.add_argument('command', choices=['start', 'stop', 'exec', 'hotfix', 'init'], help='Subcommand to run.')
+    parser.add_argument('command', choices=['start', 'stop', 'attach', 'hotfix', 'init'], help='Subcommand to run.')
     parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
     args = parser.parse_args(in_args)
 
@@ -56,8 +56,8 @@ def vs(in_args):
     if args.command == "start":
         start(manager, workspace_dir)
         return
-    if args.command == "exec":
-        exec_(manager, workspace_dir, args.args)
+    if args.command == "attach":
+        attach(manager, workspace_dir)
         return
     if args.command == "stop":
         stop(manager, workspace_dir)
@@ -102,7 +102,7 @@ def init(desired_dir, in_args):
     with open(dockerfile_file.resolve(), 'w') as f:
         f.write(dockerfile_render)
 
-def stop(manager, workspace_dir):
+def get_container_name(manager, workspace_dir):
     filter_text = '--filter label=devcontainer.local_folder="{}"'.format(workspace_dir)
     command = manager + ' ps -a '\
         + filter_text + \
@@ -110,25 +110,26 @@ def stop(manager, workspace_dir):
     output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
     containers = output.stdout.splitlines()
 
-    if len(containers) < 1:
-        print("Found no containers to stop.")
+    if len(containers) != 1:
+        return None
+    return containers[0].decode('utf-8')
 
-    for container in containers:
-        command = '{manager} stop {container} && {manager} rm {container}'.format(
-            manager=manager,
-            container=container.decode('utf-8'))
-        print('Running: "{}"'.format(command))
-        subprocess.run(command, shell=True)
+def stop(manager, workspace_dir):
+    container = get_container_name(manager, workspace_dir)
+    if not container:
+        print("Did not find a single container. Bailing.")
 
-def exec_(manager, workspace_dir, args):
-    manager_path = shutil.which(manager)
-    if not manager_path:
-        print("Could not find manager. Bailing.")
-        return
-    # Merge the args elements into a string.
-    args_string = functools.reduce(lambda list_, elem_: str(list_) + ' ' + str(elem_), args)
-    command = 'devcontainer exec --workspace-folder {} --docker-path "{}" {}'.format(
-        workspace_dir.resolve(), manager_path, args_string)
+    command = '{manager} stop {container} && {manager} rm {container}'.format(
+        manager=manager,
+        container=container)
+    print('Running: "{}"'.format(command))
+    subprocess.run(command, shell=True)
+
+def attach(manager, workspace_dir):
+    container = get_container_name(manager, workspace_dir)
+    if not container:
+        print("Could not find a running container. Bailing.")
+    command = "{} exec -it {} bash".format(manager, container)
     print('Running: {}'.format(command))
     subprocess.run(command, shell=True)
 
