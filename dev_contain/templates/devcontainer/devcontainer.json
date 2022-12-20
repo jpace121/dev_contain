@@ -1,0 +1,15 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json.
+{
+	"name": "{{ name }}",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {}
+	},
+	"runArgs": [ "--cap-add=SYS_PTRACE" ],
+	// Configure tool-specific properties.
+	"customizations": {},
+    // Add features to this container.
+    "features": {},
+	// Change this to a user in the base image to run as non-root.
+	"remoteUser": "root"
+}

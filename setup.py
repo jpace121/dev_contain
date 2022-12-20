@@ -27,6 +27,17 @@ def set_version_file():
         if git_version:
             f.write('hash: {}\n'.format(git_version))
 
+def package_files():
+    # Grab the template files.
+    directory = 'dev_contain/templates/devcontainer'
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    # Add the version file.
+    paths.append('version.yaml')
+    return paths
+
 set_version_file()
 
 setup(name='dev_contain',
@@ -40,7 +51,7 @@ setup(name='dev_contain',
       setup_requires=['wheel'],
       install_requires=['jinja2', 'pyyaml', 'json5'],
       package_data={
-        '': ['version.yaml'],
+          'dev_contain': package_files(),
       },
       entry_points = {
         'console_scripts': ['dev_contain=dev_contain.dev_contain:main'],
