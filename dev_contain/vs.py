@@ -81,7 +81,6 @@ def init(desired_dir, in_args):
 
     file_path = Path(os.path.dirname(os.path.abspath(__file__)))
     template_dir = file_path / 'templates' / 'devcontainer'
-    print(template_dir)
 
     devcontainer_file = desired_dir / 'devcontainer.json'
     dockerfile_file = desired_dir / 'Dockerfile'
@@ -102,29 +101,6 @@ def init(desired_dir, in_args):
     with open(dockerfile_file.resolve(), 'w') as f:
         f.write(dockerfile_render)
 
-def get_container_name(manager, workspace_dir):
-    filter_text = '--filter label=devcontainer.local_folder="{}"'.format(workspace_dir)
-    command = manager + ' ps -a '\
-        + filter_text + \
-        ' --format "{{.Names}}"'
-    output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
-    containers = output.stdout.splitlines()
-
-    if len(containers) != 1:
-        return None
-    return containers[0].decode('utf-8')
-
-def stop(manager, workspace_dir):
-    container = get_container_name(manager, workspace_dir)
-    if not container:
-        print("Did not find a single container. Bailing.")
-
-    command = '{manager} stop {container} && {manager} rm {container}'.format(
-        manager=manager,
-        container=container)
-    print('Running: "{}"'.format(command))
-    subprocess.run(command, shell=True)
-
 def attach(manager, workspace_dir):
     container = get_container_name(manager, workspace_dir)
     if not container:
@@ -134,6 +110,10 @@ def attach(manager, workspace_dir):
     subprocess.run(command, shell=True)
 
 def start(manager, workspace_dir):
+    container = get_container_name(manager, workspace_dir)
+    if container:
+        print("Container for this workspace already exists. {}".format(container))
+        return
     manager_path = shutil.which(manager)
     if not manager_path:
         print("Could not find manager. Bailing.")
@@ -141,6 +121,18 @@ def start(manager, workspace_dir):
     command = 'devcontainer up --workspace-folder {} --docker-path "{}"'.format(
         workspace_dir.resolve(), manager_path)
     print('Running: {}'.format(command))
+    subprocess.run(command, shell=True)
+
+def stop(manager, workspace_dir):
+    container = get_container_name(manager, workspace_dir)
+    if not container:
+        print("Did not find a single container. Bailing.")
+        return
+
+    command = '{manager} stop {container} && {manager} rm {container}'.format(
+        manager=manager,
+        container=container)
+    print('Running: "{}"'.format(command))
     subprocess.run(command, shell=True)
 
 def hotfix(manager, workspace_dir):
@@ -184,6 +176,19 @@ def is_dev_container_installed():
         return False
     else:
         return True
+
+def get_container_name(manager, workspace_dir):
+    filter_text = '--filter label=devcontainer.local_folder="{}"'.format(workspace_dir)
+    command = manager + ' ps -a '\
+        + filter_text + \
+        ' --format "{{.Names}}"'
+    output = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
+    containers = output.stdout.splitlines()
+
+    if len(containers) != 1:
+        return None
+    return containers[0].decode('utf-8')
+
 
 if __name__ == '__main__':
     vs(sys.argv[1:])
