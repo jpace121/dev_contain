@@ -20,10 +20,11 @@ from dev_contain.attach import attach
 from dev_contain.clean import clean
 from dev_contain.stop import stop
 from dev_contain.version import version
+from dev_contain.vs import vs
 
 def main():
     parser = argparse.ArgumentParser(description='Build and run containers for development.')
-    parser.add_argument('command', choices=['start', 'build', 'list', 'attach', 'clean', 'stop', 'version'], help='Subcommand to run.')
+    parser.add_argument('command', choices=['start', 'build', 'list', 'attach', 'clean', 'stop', 'version', 'vs'], help='Subcommand to run.')
     parser.add_argument('args', nargs=argparse.REMAINDER, help='Arguments to pass to the subcommand.')
     args = parser.parse_args()
 
@@ -39,6 +40,8 @@ def main():
         attach(args.args)
     if args.command == 'clean':
         clean(args.args)
+    if args.command == 'vs':
+        vs(args.args)
     if args.command == 'version':
         version()
 
