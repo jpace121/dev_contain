@@ -1,5 +1,5 @@
 Name: python-dev-contain
-Version: 7.2.0
+Version: 8.0.1
 Release: 1%{?dist}
 Summary: Development container wrapper around podman
 
@@ -41,5 +41,7 @@ Requires: (podman or docker-ce-cli or moby-engine)
 
 
 %changelog
+* Wed Dec 21 2022 James Pace <jpace121@gmail.com>
+- Update.
 * Sat Jun 20 2020 James Pace <jpace121@gmail.com>
 - Initial package.
