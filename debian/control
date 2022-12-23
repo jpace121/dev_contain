@@ -10,7 +10,7 @@ X-Python3-Version: >= 3.6
 Package: dev-contain
 Architecture: all
 Section: misc
-Depends: python3, ${python3:Depends}, ${misc:Depends}, podman | docker-ce-cli | docker.io
+Depends: python3, ${python3:Depends}, ${misc:Depends}, podman | docker-ce-cli | docker.io, python3-json5
 Description: CLI script to build and use containers for development.
  CLI script to build and use containers for development leveraging podman or
  docker.
