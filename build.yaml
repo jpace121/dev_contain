@@ -5,7 +5,7 @@
     - name: Create a container
       containers.podman.podman_container:
         name: dev-contain-debian-builder
-        image: docker.io/library/debian:bullseye
+        image: docker.io/library/debian:bookworm
         volume: "{{ playbook_dir }}:/mnt/dev_contain:Z"
         command: 'sleep infinity'
         state: started
