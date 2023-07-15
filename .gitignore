@@ -8,4 +8,3 @@ __pycache__/
 dist/
 share/
 .eggs/
-dev_contain/version.yaml
