@@ -82,6 +82,13 @@ def start(in_args):
         new_text = parse_volume(volume)
         volume_text = volume_text + new_text
 
+    # Check to see if x forwarding is going to work. If not, give a reminder.
+    if args.graphics:
+        if x_access_control_enabled():
+            print('Requested graphics, but X Access Control is enabled. This probably will not work.')
+            print('Disable by running:')
+            print('\t xhost +')
+
     command = ('{manager} run -d'
                ' --user {username}'
                ' --name {container}'
@@ -154,6 +161,13 @@ def set_up_graphics_forwards():
     privileged = '--privileged'
 
     return xorg + ' ' + wayland + ' ' + dbus + ' ' + privileged
+
+def x_access_control_enabled():
+    res = subprocess.run('xhost', shell=True, stdout=subprocess.PIPE)
+    if res.returncode == 0 and 'disabled' in res.stdout.decode('utf-8'):
+        return False
+    # Assume we're enabled.
+    return True
 
 
 if __name__ == '__main__':
