@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dev_contain"
+# Remember to update version.yaml as well!
+version = '8.0.2'
+authors = [
+    {name = "James Pace", email = "jpace121@gmail.com"},
+]
+description = "CLI script to build and use containers for development leveraging podman."
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.0"
+dependencies = [
+    "jinja2",
+    "pyyaml",
+    "json5",
+]
+
+[project.scripts]
+dev_contain = "dev_contain.dev_contain:main"
